@@ -82,7 +82,7 @@ namespace j64.AlarmServer
             // Take a lock so only one request can be sent at a time
             lock (thisLock)
             {
-                if (_client == null)
+                if (_client == null || _client.Connected == false)
                 {
                     MyLogger.LogError($"Socket is not connected.  Cannot send command => {((int)tpiRequest.Command):D3}:{tpiRequest.Command.ToString().PadRight(20)} - {tpiRequest.CommandData}");
                     return;
