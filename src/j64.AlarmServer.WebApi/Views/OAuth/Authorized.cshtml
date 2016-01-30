@@ -1,0 +1,21 @@
+﻿@model j64.Envisalink.WebApi.Model.OauthInfo
+@{
+    ViewData["Title"] = "Authorized Page";
+}
+
+<div >
+    @if (ViewData["GetTokenError"] != null)
+    {
+        <p>
+            Something went wrong during the authorization process and an access token was not received.  <br/>
+            The HTTP Error was: @ViewData["GetTokenError"]
+        </p>
+    }
+    else
+    {
+<p>Your app was successfully authorized and an access token has been saved to your SmartThing.json config file.  You should be able to start synchronizing your
+    smart thing devices with your security system.</p>
+    }
+
+</div>
+

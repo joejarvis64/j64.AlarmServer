@@ -1,0 +1,108 @@
+﻿@model j64.Envisalink.WebApi.Model.AlarmSystemInfo
+@{
+    ViewData["Title"] = "Configure Alarm System";
+}
+<style>
+    fieldset {
+        margin-bottom: 10px;
+    }
+</style>
+<form class="form-horizontal" asp-controller="ConfigureAlarm" asp-action="SaveChanges" method="post" >
+    <fieldset>
+        <legend>Alarm System Info</legend>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label asp-for="Name" class="control-label">System Name</label>
+            </div>
+            <div class="col-md-10">
+                <input asp-for="Name" placeholder="Name your system" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label asp-for="ArmingCode" class="control-label">Disarm Code</label>
+            </div>
+            <div class="col-md-10">
+                <input asp-for="ArmingCode" placeholder="Alarm system code" />
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>TPI (Envisalink) Information</legend>
+
+        <div class="form-group">
+            <div class="col-md-2"><label asp-for="Host" class="control-label">Host Name</label></div>
+            <div class="col-md-10"><input asp-for="Host" placeholder="Name or IP for TPI" /></div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label asp-for="Port" class="control-label">TCP Port #</label>
+            </div>
+            <div class="col-md-10">
+                <input asp-for="Port" placeholder="" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label asp-for="User" class="control-label">User</label>
+            </div>
+            <div class="col-md-10">
+                <input asp-for="User" placeholder="" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label asp-for="Password" class="control-label">Password</label>
+            </div>
+            <div class="col-md-10">
+                <input asp-for="Password" type="password" placeholder="" />
+            </div>
+        </div>
+    </fieldset>
+    <button class="btn btn-warning" type="submit">Save All Changes</button>
+    <table class="table table-hover">
+        <caption>&nbsp;</caption>
+        <tr class="info">
+            <th>Partition ID</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+        @foreach (var partition in Model.Partitions)
+        {
+            <tr>
+                <td><input asp-for="@partition.Id" readonly="readonly"/></td>
+                <td><input asp-for="@partition.Name" /></td>
+                <td>
+                    <a class="btn btn-warning" asp-action="DeletePartition" asp-route-id="@partition.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </table>
+    <a class="btn btn-warning" asp-action="AddPartition">Add Partition</a>
+    <table class="table table-hover">
+        <caption>&nbsp;</caption>
+        <tr class="info">
+            <th>Zone ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th></th>
+        </tr>
+        @foreach (var zone in Model.Zones)
+        {
+            <tr>
+                <td><input asp-for="@zone.Id" readonly="readonly" /></td>
+                <td><input asp-for="@zone.Name" /></td>
+                <td>
+                    <select asp-for="@zone.ZoneType" class="form-control">
+                        <option>Contact</option>
+                        <option>Motion</option>
+                    </select>
+                </td>
+                <td>
+                    <a class="btn btn-warning" asp-action="DeleteZone" asp-route-id="@zone.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </table>
+    <a class="btn btn-warning" asp-action="AddZone">Add Zone</a>
+</form>

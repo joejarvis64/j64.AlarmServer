@@ -1,0 +1,44 @@
+
+Must Do
+-------
+6) Get a deployment package setup for mac
+
+7) Write doco on how everything works
+8) publish it to the smart things community forums
+
+
+Nice to Haves
+-------------
+3) Create a linux deployment package
+4) Determine if the hub command can be sent to remote destinations.  if not, add ability to toggle between local lan call vs. normal json call from the cloud
+
+
+
+DONE
+----
+2) also add/delete zones & partitions as they are modified in the app
+1) Update device names in smart things when/if the configuration is modified
+1) make the arming code a parameter.  it is currently hard coded (search for 2804)
+2) fix alarmserver settings.  can't use the jsonignore attribure on the models since that data is returned from the api)
+6) clean up the return codes from alarmsystem.sendcommand (right now it just says "test send" in an array list)
+4) Centralize the logging of messages so they can be seen via the UI
+6) Add the ability to configure the alarm system zones and partitions
+1) Set the IP address of the j64 server automatically.  it is currently hardcoded
+3) Can I automatically turn on alarm when set into the away/stay mode on the smart home dashboard
+4) fix socket issue from below
+	just added the polling logic.  we will see if that fixes the issue
+
+
+COULD NOT DO THESE
+------------------
+5) Add user/password to the j64 web site
+	Can't find a good way to restrict access from certain IP's
+
+2) Can i show all of the zones on that partition page?  basically a dynamic view of those zones or something like that?
+	No, going to use Rooms rather than trying to make a dynamic page
+
+1) Can I auto add the zones/partitions to a group called security system in smart things 
+	(could not find a way to do this!)
+
+3) Why doesn't the group show the round circle on the display (none of the zones show a round circle in the display)
+	(n/a - if there is no action it will just show text and not the button!) 

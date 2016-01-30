@@ -1,0 +1,81 @@
+﻿@model j64.Envisalink.WebApi.Model.TestSendView
+@{
+    ViewData["Title"] = "Test Send Page";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="TestSend" asp-action="PartitionTest" method="post">
+            <fieldset>
+                <legend>Partition Commands</legend>
+                <div class="form-group">
+                    <label asp-for="PartitionId">ID</label>
+                    <input asp-for="PartitionId" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="ArmingMode">Arming Mode</label>
+                    <select asp-for="ArmingMode" class="form-control">
+                        <option value="NotArmed"></option>
+                        <option>Away</option>
+                        <option>Stay</option>
+                        <option>ExitDelayInProgress</option>
+                        <option>EntryDelayInProgress</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="AlarmOn" type="checkbox" />Alarm On
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="ReadyToArm" type="checkbox" />Ready To Arm
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsArmed" type="checkbox" />Is Armed
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning">Update Partition</button>
+            </fieldset>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <form asp-controller="TestSend" asp-action="ZoneTest" method="post">
+            <fieldset>
+                <legend>Zone Commands</legend>
+                <div class="form-group">
+                    <label asp-for="ZoneId">ID</label>
+                    <input asp-for="ZoneId" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="ZoneStatus">Status</label>
+                    <select asp-for="ZoneStatus" class="form-control">
+                        <option></option>
+                        <option>Open</option>
+                        <option>Closed</option>
+                        <option>Alarm</option>
+                        <option>Tamper</option>
+                        <option>Fault</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-warning">Update Zone</button>
+            </fieldset>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <form asp-controller="TestSend" asp-action="RefreshDevices" method="post">
+            <fieldset>
+                <legend>Misc Commands</legend>
+                <button type="submit" class="btn btn-warning">Refresh All Devices</button>
+            </fieldset>
+        </form>
+    </div>
+</div>
