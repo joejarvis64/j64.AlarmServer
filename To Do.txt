@@ -14,21 +14,6 @@ Nice to Haves
 
 
 
-DONE
-----
-2) also add/delete zones & partitions as they are modified in the app
-1) Update device names in smart things when/if the configuration is modified
-1) make the arming code a parameter.  it is currently hard coded (search for 2804)
-2) fix alarmserver settings.  can't use the jsonignore attribure on the models since that data is returned from the api)
-6) clean up the return codes from alarmsystem.sendcommand (right now it just says "test send" in an array list)
-4) Centralize the logging of messages so they can be seen via the UI
-6) Add the ability to configure the alarm system zones and partitions
-1) Set the IP address of the j64 server automatically.  it is currently hardcoded
-3) Can I automatically turn on alarm when set into the away/stay mode on the smart home dashboard
-4) fix socket issue from below
-	just added the polling logic.  we will see if that fixes the issue
-
-
 COULD NOT DO THESE
 ------------------
 5) Add user/password to the j64 web site
