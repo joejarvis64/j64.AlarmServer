@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.OptionsModel;
 using j64.AlarmServer;
-using j64.AlarmServer.WebApi.Model;
+using j64.AlarmServer.WebApi.Models;
 
 namespace j64.AlarmServer.WebApi.Controllers
 {

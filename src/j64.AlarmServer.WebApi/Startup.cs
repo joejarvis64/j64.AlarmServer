@@ -1,31 +1,45 @@
-﻿using Microsoft.AspNet.Builder;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Data.Entity;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using j64.AlarmServer.Models;
+using j64.AlarmServer.Services;
 using j64.AlarmServer;
-using j64.AlarmServer.WebApi;
-using Microsoft.AspNet.Authorization;
+using j64.AlarmServer.WebApi.Models;
 
-namespace j64.AlarmServer.WebApi
+namespace j64.AlarmServer
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables();
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsDevelopment())
+            {
+                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
                 builder.AddUserSecrets();
+            }
 
-            Model.AlarmSystemRepository.RepositoryFile = env.MapPath("AlarmSystemInfo.json");
-            Model.OauthRepository.RepositoryFile = env.MapPath("SmartThings.json");
+            AlarmSystemRepository.RepositoryFile = env.MapPath("AlarmSystemInfo.json");
+            OauthRepository.RepositoryFile = env.MapPath("SmartThings.json");
             MyLogger.LogFileName = env.MapPath("LogMessages.txt");
-
+            
+            builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            Configuration["Data:DefaultConnection:ConnectionString"] = $@"Data Source={appEnv.ApplicationBasePath}/j64.AlarmServer.db";
+
         }
 
         public IConfigurationRoot Configuration { get; set; }
@@ -34,16 +48,29 @@ namespace j64.AlarmServer.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddEntityFramework()
+                .AddSqlite()
+                .AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlite(Configuration["Data:DefaultConnection:ConnectionString"]));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
             services.AddMvc();
 
             // Setup the alarm system
-            AlarmSystem alarmSystem = Model.AlarmSystemRepository.Get();
-            alarmSystem.ZoneChange += Model.SmartThingsRepository.AlarmSystem_ZoneChange;
-            alarmSystem.PartitionChange += Model.SmartThingsRepository.AlarmSystem_PartitionChange;
+            AlarmSystem alarmSystem = AlarmSystemRepository.Get();
+            alarmSystem.ZoneChange += SmartThingsRepository.AlarmSystem_ZoneChange;
+            alarmSystem.PartitionChange += SmartThingsRepository.AlarmSystem_PartitionChange;
             alarmSystem.StartSession();
 
             // Add the alarm system as a service available to the controllers
             services.AddInstance<AlarmSystem>(alarmSystem);
+            
+            // Add application services.
+            services.AddTransient<IEmailSender, AuthMessageSender>();
+            services.AddTransient<ISmsSender, AuthMessageSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,17 +81,33 @@ namespace j64.AlarmServer.WebApi
 
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+
+                // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
+                try
+                {
+                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
+                        .CreateScope())
+                    {
+                        serviceScope.ServiceProvider.GetService<ApplicationDbContext>()
+                             .Database.Migrate();
+                    }
+                }
+                catch { }
             }
 
-            app.UseIISPlatformHandler();
+            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
 
             app.UseStaticFiles();
+
+            app.UseIdentity();
+
+            // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc(routes =>
             {
@@ -75,6 +118,6 @@ namespace j64.AlarmServer.WebApi
         }
 
         // Entry point for the application.
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+        public static void Main(string[] args) => Microsoft.AspNet.Hosting.WebApplication.Run<Startup>(args);
     }
 }

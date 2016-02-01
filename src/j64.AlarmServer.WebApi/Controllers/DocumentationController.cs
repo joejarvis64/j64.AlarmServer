@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using j64.AlarmServer.WebApi.Model;
+using j64.AlarmServer.WebApi.Models;
 using Microsoft.AspNet.Authorization;
 
 namespace j64.AlarmServer.WebApi.Controllers

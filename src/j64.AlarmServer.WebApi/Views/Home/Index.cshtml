@@ -4,18 +4,7 @@
 }
 
 <div class="row">
-    <div class="col-md-2"><label>Name</label></div>
-    <div class="col-md-10">@Model.Name</div>
-</div>
-<div class="row">
-    <div class="col-md-2"><label>TPI Host IP:Port</label></div>
-    <div class="col-md-10">@Model.Host:@Model.Port</div>
-</div>
-<div class="row">
-    <div class="col-md-2"><label>Connected to TPI</label></div>
-    <div class="col-md-10">@Model.IsConnected</div>
-</div>
-
+    <div class="col-md-6">
 @if (Model.IsConnected == false)
 {
     <br/>
@@ -27,74 +16,101 @@
 }
 else
 {
-<table class="table table-hover">
-    <caption class="">Partion Information</caption>
-    <tr class="info">
-        <th>ID</th>
-        <th>Name</th>
-        <th>Bypass Active</th>
-        <th>Ready to Arm</th>
-        <th>Armed</th>
-        <th>Arming Mode</th>
-        <th>Alarm Sounding</th>
-    </tr>
-    @foreach (var p in Model.Partitions)
-    {
-        <tr>
-            <td>@p.Id</td>
-            <td>@p.Name</td>
-            <td>@p.BypassActive</td>
-            <td>@p.ReadyToArm</td>
-            <td>@p.IsArmed</td>
-            <td>@p.ArmingMode</td>
-            <td>@p.AlarmOn</td>
-        </tr>
-        <tr>
-            <td></td>
-            <td colspan="5">
-                @if (p.ReadyToArm && !p.IsArmed && !p.AlarmOn)
-                {
-                    <a class="btn btn-warning" asp-action="StayArm" asp-route-id="@p.Id">Stay Arm</a>
-                    <a class="btn btn-warning" asp-action="AwayArm" asp-route-id="@p.Id">Away Arm</a>
-                }
-
-                @if (p.IsArmed || p.AlarmOn)
-                { <a class="btn btn-warning" asp-action="Disarm" asp-route-id="@p.Id">Disarm</a> }
-
-                <a class="btn btn-warning" asp-action="Index" asp-route-id="@p.Id">Refresh</a>
-            </td>
-            <td>
-                @if (!p.AlarmOn)
-                { <a class="btn btn-warning" asp-action="SoundAlarm" asp-route-id="@p.Id" >Sound Alarm</a> }
-            </td>
-        </tr>
-    }
-</table>
-
-<table class="table table-hover" title="Zones">
-    <caption>Zone Information</caption>
-    <tr class="info">
-        <th>ID</th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>In Alarm</th>
-        <th></th>
-        <th>@if (Model.Partitions.Count > 0 && Model.Partitions[0].BypassActive)
-        { <a class="btn btn-warning" asp-action="BypassZone" asp-route-id="0" title="Clear all zones that are bypassed">Clear All</a> }</th>
-    </tr>
-    @foreach (var z in Model.Zones)
-    {
-        <tr>
-            <td>@z.Id</td>
-            <td>@z.Name</td>
-            <td>@z.Status</td>
-            <td>@z.InAlarm</td>
-            <td>@z.TimeSinceLastClose</td>
-            <td>
-                @if (z.Status == "Open")
-            { <a class="btn btn-warning" asp-action="BypassZone" asp-route-id="@z.Id" title="Toggle the bypass status for this zone">Bypass</a> }
-        </td>
-    </tr>
-    }
-</table>
+        <div class="panel panel-default">
+            <div class="panel-heading">  
+                <div class="row">
+                    <div class='col-xs-10'>
+                        @if (Model.IsConnected) { <span>Connected to </span> } else { <span>Not Connected to</span> } @Model.Host:@Model.Port
+                    </div>
+                    <div class='col-xs-2'>
+                        @if (Model.Partitions.Count > 0 && !Model.Partitions[0].AlarmOn)
+                        { 
+                            <a style='float:right' class='btn btn-primary btn-xs' asp-action="SoundAlarm" asp-route-id="0" >Sound Alarm&nbsp;<i class="fa fa-bullhorn"></i></a> 
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover" style='margin-bottom: 0px'>
+                    <tbody>
+                        @foreach (var p in Model.Partitions)
+                        {
+                        <tr>
+                            <td style='border-top: 0px'>
+                                @if (p.ReadyToArm && !p.IsArmed && !p.AlarmOn)
+                                {
+                                    <i class='fa fa-check-square-o' style='color:green'></i>
+                                }
+                                else if (p.IsArmed)
+                                {
+                                    <i class="fa fa-bell-o fa-2x" style='color:red; top: 14px; position: relative;'></i>
+                                }
+                                else
+                                {
+                                    <i class='fa fa-exclamation-triangle' style='color:red'></i>
+                                }
+                                @p.Name Partition
+                                <div style='margin-left: 30px; font-style: italic'>@p.ArmingMode<div>
+                                </td>
+                            <td style='border-top: 0px; text-align: right;'>
+                                @if (p.ReadyToArm && !p.IsArmed && !p.AlarmOn)
+                                {
+                                    <a class="btn btn-primary btn-xs" asp-action="StayArm" asp-route-id="@p.Id">Stay Arm&nbsp;<i class='fa fa-home'></i></a>
+                                    <a class="btn btn-primary btn-xs" asp-action="AwayArm" asp-route-id="@p.Id">Away Arm&nbsp;<i class="fa fa-car"></i></a>
+                                }
+                                @if (p.IsArmed || p.AlarmOn)
+                                { 
+                                    <a class='btn btn-primary btn-xs' asp-action="Disarm" asp-route-id="@p.Id">Disarm</a> 
+                                }
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+       </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">  
+                Zones
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover" style='margin-bottom: 0px'>
+                    <tbody>
+                        @foreach (var z in Model.Zones) 
+                        {
+                        <tr>
+                            <td style='border-top: 0px'>
+                                @if (z.Status == "Open") { <i style='color:red' class='fa fa-exclamation-triangle'></i> } else { <i class='fa fa-check-square-o' style='color:green'></i> } 
+                                <span title="@z.TimeSinceLastClose">@z.Name</span>
+                                @if (z.Status == "Open") 
+                                { 
+                                    @if (Model.Partitions.Count > 0 && Model.Partitions[0].BypassActive)
+                                    { 
+                                        <a style='float:right' class='btn btn-primary btn-xs' asp-action='BypassZone' asp-route-id='0' title='Clear all zones that are bypassed'>Clear Bypass</a> 
+                                    }
+                                    else
+                                    {
+                                       <a style='float:right' class='btn btn-primary btn-xs' asp-action='BypassZone' asp-route-id='@z.Id' title='Bypass status for this zone'>Bypass Zone</a> 
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
 }
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">  
+                TPI Log
+                <a class="btn btn-primary btn-xs" asp-action='Refresh' title='Refresh log information' style='float: right'>Refresh&nbsp;<i class="fa fa-refresh"></i></a>
+            </div>
+            <div class="panel-body">
+                @Component.Invoke("TpiLog")
+            </div>
+        </div>
+    </div>
+</div>

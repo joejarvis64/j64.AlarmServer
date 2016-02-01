@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using j64.AlarmServer.WebApi.Model;
+using j64.AlarmServer.WebApi.Models;
 using Microsoft.AspNet.Http.Features;
 
 namespace j64.AlarmServer.WebApi.Controllers
@@ -33,7 +33,7 @@ namespace j64.AlarmServer.WebApi.Controllers
             myAlarmSystem.Host = alarmInfo.Host;
             myAlarmSystem.Port = alarmInfo.Port;
             myAlarmSystem.User = alarmInfo.User;
-            if (!String.IsNullOrEmpty(alarmInfo.Password))
+            if (!String.IsNullOrEmpty(alarmInfo.Password) && alarmInfo.Password != "test123")
                 myAlarmSystem.Password = alarmInfo.Password;
 
             for (int i = 0; i < Request.Form["partition.Id"].Count; i++)
