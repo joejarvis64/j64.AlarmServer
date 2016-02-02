@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using j64.AlarmServer.WebApi.Models;
 using Microsoft.AspNet.Http.Features;
+using Microsoft.AspNet.Authorization;
 
 namespace j64.AlarmServer.WebApi.Controllers
 {
+    [Authorize]
     public class ConfigureAlarmController : Controller
     {
         private AlarmSystem myAlarmSystem;

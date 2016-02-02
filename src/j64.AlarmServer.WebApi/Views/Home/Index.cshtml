@@ -50,7 +50,7 @@ else
                                     <i class='fa fa-exclamation-triangle' style='color:red'></i>
                                 }
                                 @p.Name Partition
-                                <div style='margin-left: 30px; font-style: italic'>@p.ArmingMode<div>
+                                <div style='margin-left: 30px; font-style: italic'>@p.ArmingMode</div>
                                 </td>
                             <td style='border-top: 0px; text-align: right;'>
                                 @if (p.ReadyToArm && !p.IsArmed && !p.AlarmOn)
@@ -92,6 +92,7 @@ else
                                     {
                                        <a style='float:right' class='btn btn-primary btn-xs' asp-action='BypassZone' asp-route-id='@z.Id' title='Bypass status for this zone'>Bypass Zone</a> 
                                     }
+                                    <div style='margin-left: 30px; font-style: italic'>Currently Open</div>
                                 }
                             </td>
                         </tr>

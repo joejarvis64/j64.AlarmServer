@@ -6,9 +6,11 @@ using Microsoft.AspNet.Mvc;
 using j64.AlarmServer.WebApi.Models;
 using Newtonsoft.Json;
 using System.IO;
+using Microsoft.AspNet.Authorization;
 
 namespace j64.AlarmServer.WebApi.Controllers
 {
+    [Authorize]
     public class OAuthController : Controller
     {
         public OAuthController()

@@ -8,6 +8,7 @@ using Microsoft.AspNet.Authorization;
 
 namespace j64.AlarmServer.WebApi.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private AlarmSystem myAlarmSystem { get; set; }
