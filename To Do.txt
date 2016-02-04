@@ -1,29 +1,17 @@
 
 Must Do
 -------
-6) Get a deployment package setup for mac
-
-7) Write doco on how everything works
-8) publish it to the smart things community forums
-
-
-Nice to Haves
--------------
-3) Create a linux deployment package
-4) Determine if the hub command can be sent to remote destinations.  if not, add ability to toggle between local lan call vs. normal json call from the cloud
-
+1) Do not hard code the password for admin in the installDevices function.  Needs to dynamically pass that to smart things.
+2) Get a deployment package setup for mac
+3) Write doco on how everything works
+4) publish it to the smart things community forums
+5) Create a linux deployment package
+6) Add https support once aspnetcore rc2 comes out
 
 
 COULD NOT DO THESE
 ------------------
-5) Add user/password to the j64 web site
-	Can't find a good way to restrict access from certain IP's
-
-2) Can i show all of the zones on that partition page?  basically a dynamic view of those zones or something like that?
-	No, going to use Rooms rather than trying to make a dynamic page
-
 1) Can I auto add the zones/partitions to a group called security system in smart things 
 	(could not find a way to do this!)
-
-3) Why doesn't the group show the round circle on the display (none of the zones show a round circle in the display)
+2) Why doesn't the group show the round circle on the display (none of the zones show a round circle in the display)
 	(n/a - if there is no action it will just show text and not the button!) 

@@ -175,7 +175,7 @@ namespace j64.AlarmServer
 
         public async Task CreateMasterUser( )
         {
-            var user = await _userManager.FindByEmailAsync("admin@foo.com");
+            var user = await _userManager.FindByNameAsync("admin");
 
             if( user == null )
             {
