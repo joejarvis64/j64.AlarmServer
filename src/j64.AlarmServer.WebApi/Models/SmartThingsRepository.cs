@@ -151,6 +151,8 @@ namespace j64.AlarmServer.WebApi.Models
                 List<KeyValuePair<string, string>> parms = new List<KeyValuePair<string, string>>();
                 parms.Add(new KeyValuePair<string, string>("j64Server", j64Server));
                 parms.Add(new KeyValuePair<string, string>("j64Port", j64Port.ToString()));
+                parms.Add(new KeyValuePair<string, string>("j64UserName", "admin"));
+                parms.Add(new KeyValuePair<string, string>("j64Password", "Admin_01"));
                 msg.Content = new System.Net.Http.FormUrlEncodedContent(parms);
                 var response = client.SendAsync(msg);
                 response.Wait();

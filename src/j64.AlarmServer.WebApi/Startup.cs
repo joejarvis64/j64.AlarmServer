@@ -82,7 +82,7 @@ namespace j64.AlarmServer
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, SampleDataInitializer sampleData)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, SampleDataInitializer sampleData, UserManager<ApplicationUser> userManager)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -115,21 +115,30 @@ namespace j64.AlarmServer
 
             app.UseIdentity();
 
+            // Refactor this into a seperate class
+            // Remove hard coding of the password in the installDevices routine!
             app.UseBasicAuthentication(o =>
             {
-                o.Realm = $"Password: Joe_111";
+                o.Realm = $"j64 Alarm";
 
                 o.Events = new BasicAuthenticationEvents
                 {
                     OnSignIn = c =>
                     {
-                        Console.WriteLine($"password is {c.Password}");
-                        
-                        if (c.Password == "Joe_111")
+                        var x = userManager.FindByNameAsync(c.UserName);
+                        x.Wait();
+                        if (x.Result != null)
                         {
-                            var claims = new[] { new Claim(ClaimsIdentity.DefaultNameClaimType, c.UserName) };
-                            var identity = new ClaimsIdentity(claims, c.Options.AuthenticationScheme);
-                            c.Principal = new ClaimsPrincipal(identity);
+                            var y = userManager.CheckPasswordAsync(x.Result, c.Password);
+                            y.Wait();
+
+                            if (y.Result == true)
+                            {
+                                var z = userManager.GetClaimsAsync(x.Result);
+                                z.Wait();
+                                var identity = new ClaimsIdentity(z.Result, c.Options.AuthenticationScheme);
+                                c.Principal = new ClaimsPrincipal(identity);
+                            }
                         }
 
                         return Task.FromResult(true);
