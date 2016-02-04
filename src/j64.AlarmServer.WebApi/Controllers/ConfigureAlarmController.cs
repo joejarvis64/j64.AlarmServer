@@ -9,7 +9,7 @@ using Microsoft.AspNet.Authorization;
 
 namespace j64.AlarmServer.WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "ManageConfig")]
     public class ConfigureAlarmController : Controller
     {
         private AlarmSystem myAlarmSystem;

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using System.IO;
 using j64.AlarmServer.WebApi.Models;
+using Microsoft.AspNet.Authorization;
 
 namespace j64.AlarmServer.WebApi.Controllers
 {

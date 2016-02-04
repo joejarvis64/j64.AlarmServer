@@ -9,8 +9,8 @@ namespace j64.AlarmServer.ViewModels.Account
     public class LoginViewModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Display(Name = "UserId or Email")]
+        public string UserId { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

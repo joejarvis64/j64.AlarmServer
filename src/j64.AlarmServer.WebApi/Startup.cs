@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity;
+using System.Security.Claims;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.Configuration;
@@ -12,8 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using j64.AlarmServer.Models;
 using j64.AlarmServer.Services;
-using j64.AlarmServer;
 using j64.AlarmServer.WebApi.Models;
+using Moon.AspNet.Authentication.Basic;
 
 namespace j64.AlarmServer
 {
@@ -55,8 +57,13 @@ namespace j64.AlarmServer
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-
+                .AddDefaultTokenProviders() ;
+                
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ArmDisarm", policy => policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "ArmDisarm"));
+            });
+    
             services.AddMvc();
 
             // Setup the alarm system
@@ -67,6 +74,7 @@ namespace j64.AlarmServer
 
             // Add the alarm system as a service available to the controllers
             services.AddInstance<AlarmSystem>(alarmSystem);
+            services.AddTransient<SampleDataInitializer>();
             
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -74,7 +82,7 @@ namespace j64.AlarmServer
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, SampleDataInitializer sampleData)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -107,6 +115,28 @@ namespace j64.AlarmServer
 
             app.UseIdentity();
 
+            app.UseBasicAuthentication(o =>
+            {
+                o.Realm = $"Password: Joe_111";
+
+                o.Events = new BasicAuthenticationEvents
+                {
+                    OnSignIn = c =>
+                    {
+                        Console.WriteLine($"password is {c.Password}");
+                        
+                        if (c.Password == "Joe_111")
+                        {
+                            var claims = new[] { new Claim(ClaimsIdentity.DefaultNameClaimType, c.UserName) };
+                            var identity = new ClaimsIdentity(claims, c.Options.AuthenticationScheme);
+                            c.Principal = new ClaimsPrincipal(identity);
+                        }
+
+                        return Task.FromResult(true);
+                    }
+                };
+            });
+            
             // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc(routes =>
@@ -115,9 +145,59 @@ namespace j64.AlarmServer
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            
+            // Seed some default entries into the database
+            var task = sampleData.CreateMasterUser();
         }
-
         // Entry point for the application.
         public static void Main(string[] args) => Microsoft.AspNet.Hosting.WebApplication.Run<Startup>(args);
+    }
+    
+    public class SampleDataInitializer
+    {
+        private ApplicationDbContext _ctx;
+        private UserManager<ApplicationUser> _userManager;
+    
+        public SampleDataInitializer(ApplicationDbContext ctx, UserManager<ApplicationUser> userManager)
+        {
+            _ctx = ctx;
+            _userManager = userManager;
+        }
+
+        public async Task CreateMasterUser( )
+        {
+            var user = await _userManager.FindByEmailAsync("admin@foo.com");
+
+            if( user == null )
+            {
+                user = new ApplicationUser()
+                {
+                    Email = "changeme@changeme.com",
+                    UserName = "admin"
+                };
+
+                IdentityResult result = await _userManager.CreateAsync(user, "Admin_01");
+
+                if( !result.Succeeded )
+                {
+                    MyLogger.LogError("Could not create admin user.  Messages were: " + String.Join("; ", result.Errors.Select(x => x.Description)));
+                    return;
+                }
+            }
+
+            var claims = await _userManager.GetClaimsAsync(user);
+            await AddClaim(user, claims, "ManageConfig");
+            await AddClaim(user, claims, "ArmDisarm");
+
+            MyLogger.LogInfo("Added the default roles to admin user with default password and roles");
+        }
+
+        private async Task AddClaim(ApplicationUser user, IList<Claim> claims, string claim )
+        {
+            var roleType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+            
+            if( claims.SingleOrDefault(x => x.Type == roleType && x.Value == claim) == null )
+                await _userManager.AddClaimAsync(user, new Claim(roleType, claim, null));
+         }
     }
 }

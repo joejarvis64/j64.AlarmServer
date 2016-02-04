@@ -29,6 +29,7 @@ namespace j64.AlarmServer.WebApi.Controllers
             return View("Index", new AlarmSystemInfo(myAlarmSystem));
         }
 
+        [Authorize(Roles = "ArmDisarm")]
         public IActionResult StayArm(int id)
         {
             ValidateSecurity.AllowLocalLan();
@@ -36,6 +37,7 @@ namespace j64.AlarmServer.WebApi.Controllers
             return View("Index", new AlarmSystemInfo(myAlarmSystem));
         }
 
+        [Authorize(Roles = "ArmDisarm")]
         public IActionResult AwayArm(int id)
         {
             ValidateSecurity.AllowLocalLan();
@@ -43,6 +45,7 @@ namespace j64.AlarmServer.WebApi.Controllers
             return View("Index", new AlarmSystemInfo(myAlarmSystem));
         }
 
+        [Authorize(Roles = "ArmDisarm")]
         public IActionResult Disarm(int id)
         {
             ValidateSecurity.AllowLocalLan();
@@ -50,6 +53,7 @@ namespace j64.AlarmServer.WebApi.Controllers
             return View("Index", new AlarmSystemInfo(myAlarmSystem));
         }
 
+        [Authorize(Roles = "ArmDisarm")]
         public IActionResult SoundAlarm()
         {
             ValidateSecurity.AllowLocalLan();
@@ -57,6 +61,7 @@ namespace j64.AlarmServer.WebApi.Controllers
             return View("Index", new AlarmSystemInfo(myAlarmSystem));
         }
 
+        [Authorize(Roles = "ArmDisarm")]
         public IActionResult BypassZone(int id)
         {
             ValidateSecurity.AllowLocalLan();

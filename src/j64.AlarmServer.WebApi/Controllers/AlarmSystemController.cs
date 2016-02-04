@@ -6,6 +6,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.OptionsModel;
 using j64.AlarmServer;
 using j64.AlarmServer.WebApi.Models;
+using Microsoft.AspNet.Authorization;
 
 namespace j64.AlarmServer.WebApi.Controllers
 {
@@ -16,6 +17,7 @@ namespace j64.AlarmServer.WebApi.Controllers
         public T Response { get; set; }
     }
 
+    [Authorize(Roles = "ArmDisarm")]
     [Route("api/[controller]")]
     public class AlarmSystemController : Controller
     {

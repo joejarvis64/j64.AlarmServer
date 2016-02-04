@@ -1,0 +1,18 @@
+﻿{
+  "version": "1.0.0-ci",
+  "authors": [ "Dusan Janosik" ],
+  "owners": [ "djanosik" ],
+  "projectUrl": "https://github.com/djanosik/Moon.AspNet",
+  "iconUrl": "http://moontea.net/moon.png",
+  "description": "ASP.NET Core middleware that enables an application to use Basic authentication.",
+  "tags": [ "moontea", "aspnet", "core", "authentication", "basic" ],
+
+  "dependencies": {
+    "Microsoft.AspNet.Authentication": "1.0.0-*"
+  },
+
+  "frameworks": {
+    "dnxcore50": { }
+
+  }
+}
