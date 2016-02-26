@@ -1,7 +1,7 @@
 # j64.AlarmServer
 Server to integrate Envisalink DSC controller with Smart Things
 
-The reason I wrote it was not really because there was anything wrong with AlarmServer (I mostly got it working), it was more because I wanted to learn a little bit about SmartThings development as well as learn how to use the new cross platform framework that MS has come out with: dotnetcore aka Asp.NetCore 1.0. I am always pretty skeptical when someone tells me they built a better mousetrap so I am not going to say that but am willing to share it with anyone that is interested. I would hope that someone takes the time to write up some nice doco on how to quickly/easily install everything as that would help me out quite a bit.
+The reason I wrote it was not really because there was anything wrong with other AlarmServer packages that work with SmartThings (I mostly got them working), it was more because I wanted to learn a little bit about SmartThings development as well as learn how to use the new cross platform framework that MS has come out with: dotnetcore aka Asp.NetCore 1.0. I am always pretty skeptical when someone tells me they built a better mousetrap so I am not going to say that but am willing to share it with anyone that is interested. I would hope that someone takes the time to write up some nice doco on how to quickly/easily install everything as that would help me out quite a bit.
 
 Right now I don't have an install package for this but can probably get one created this weekend to make it easier to get up and running. As of this moment if you wanted to get it running you would have quite a few manual steps to build it get it running on your local machine.
 
