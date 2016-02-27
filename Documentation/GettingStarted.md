@@ -47,7 +47,7 @@ The exact steps for this build will vary slightly depending on whether you are r
 1. Bring up a terminal session and change to the directory where you cloned the respository in step 2 above
 
 2. change to the src directory that contains each of the projects.  There are 3 projects that need to be restored and built.  It should look something like this:
- > ![Src Directory](Images/srcdirectory.png "src directory")
+ > ![Src Directory](Images/SrcDirectory.png "src directory")
  
 3. Next change to the j64.AlarmServer directory and restore it with this command:
   > dnu restore
