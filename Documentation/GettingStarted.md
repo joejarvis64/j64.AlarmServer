@@ -9,7 +9,7 @@ Eventually I will get these published on smart things but for now you have to ma
 
 Next, select the SmartApps option at the top of the web page to show all of the smart apps you have already installed.  Once there, click on the big green "New SmartApp" button on the right side of the page.
 
- ![Smart Apps Page](/images/SmartAppPicture.png "Smart Things Smart Apps Page")
+ ![Smart Apps Page](images/SmartAppPicture.png)
 
 The next page that comes up will have a form to create a new smart app.  You should select the "From Code" option at the top of the page.
 
