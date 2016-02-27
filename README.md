@@ -1,37 +1,23 @@
 # j64.AlarmServer
-Server to integrate Envisalink DSC controller with Smart Things
+A Server to integrate the Envisalink DSC controller with Smart Things
 
-The reason I wrote this code was not really because there was anything wrong with other AlarmServer packages that work with SmartThings (I mostly got them working), it was more because I wanted to learn a little bit about SmartThings development as well as learn how to use the new cross platform framework that MS has come out with: dotnetcore aka Asp.NetCore 1.0. I am always pretty skeptical when someone tells me they built a better mousetrap so I am not going to say that but am willing to share it with anyone that is interested. I would hope that someone takes the time to write up some nice doco on how to quickly/easily install everything as that would help me out quite a bit.
+This server allows you to integrate the EnvisaLink DSC controller with the Smart Things Hub.  Once
+integrated you are able to control you security system from the smart things hub and begin to do
+things like automatically turning security on when you leave, incorporate your motion sensors into
+smart things routines (turn lights on when motion is detected), integrate turning your security system on and off via the amazon echo and many other things.
 
-Right now I don't have an install package for this but can probably get one created this weekend to make it easier to get up and running. As of this moment if you wanted to get it running you would have quite a few manual steps to build it get it running on your local machine.
+The main reason I wrote this code was not because there was anything wrong with other AlarmServer packages that work with SmartThings, it was more because I wanted to learn a little bit about SmartThings development as well as learn how to use the new cross platform framework that MS has come out with Asp.NetCore 1.0. 
 
-So, if your interested here are the basic steps to get it running:
+The following diagram illustrates how the various components of the solution interact with each other.
 
-1) go to http://get.asp.net and get the dot net core framework and runtime up and going on your machine
+![Smart Apps Page](Documentation/Images/j64Overview.png)
 
-2) pull a copy of the code from here: https://github.com/joejarvis64/j64.AlarmServer.git
+When the j64AlarmServer is started it opens a socket to the Envisalink controller.  The envisalink server will send information about the state of the alarm system back to j64AlarmServer including items such as whether a window is open, motion is detected or the alarm has been activated.  Likewise, the j64AlarmServer will send commands to Envisalink that will perform functions such as arming or disarming the security system.
 
-3) Install the j64*Device.groovy source members as new device types in the the smart things IDE
+As various events occur on the security sytem the j64AlarmServer will raise events.  These events can be caught by any applications that have subscribed to them.  In this case the j64WebApi will subscribe to those events and for certain events it will notify the smart things hub of the change.  For example if a window is opened that event is caught by j64AlarmServer and a web service call is made to the j64 Smart App that is running withing the Smart Things cloud.  From there the Smart App can take the appropriate action.  Typically this means notifying all of the devices that were defined for the controller and then propogating that state information out to the mobile app.
 
-4) Install the j64*SmartApp.grooy source member as a new smart app in the smart things IDE
+The smart things mobile app allows the user to trigger actions such as arming the security system.  When this occurs, the mobile app will talk to the devices running within the smart things cloud.  Those devices will then relay a web service call to the j64WebApi via the Smart Things Hub.  So it is the smart things hub that talks to the j64WebApi that is running on your local network.    The apps were designed to make a call to j64WebApi from the local network only to prevent the need to open up ports on the firewall that is protecting your local network.   
 
-5) Click the publish button for all of the device types and smart apps that you loaded into the smart things IDE
+There is obviously alot more to how this all works.  You are encouraged to look at the code, make enhancements or suggest how I can improve on it.
 
-6) Build the j64AlarmServer app using dnu restore, dnu build in the various source directories. I use visual studio so this is easy on my windows machine. On my mac i have to run those form a terminal window. I've not tried on linux yet but assume it is the same as on the mac.
-
-7) Go to the webapi direcotry and run the web app with "dnx web" command.
-
-8) Once the web app is running go to the "Configure" page and define all of your partitions, zones, and TPI connection info. Be sure to click save
-
-9) Go to the Install Smart App page on the web app. Enter your client secret key for the smart app you published in step 5
-
-10) click the authorize button and it will install all of your partitions, zones, alarms, etc into smart things
-
-11) Pull up your mobile app and it should all be there under devices named j64xxxx. I organize everything into a "room" within the smart app to make it easier to get at all the zones and partitions.
-
-
-Is this any easier to get running than the other smart things alarm packages out there? Probably not at this moment. However, I think I could eliminate step 1, 2, 6 and 7 with a nice install package for the app and I can get rid of step 3,4,5 by submitting my smart app/device types to smart things for publication.
-
-In my perfect world this would basically be running the install app and then following the nicely documented process on the "Documentation" page of that web site.
-
-If anyone is up for giving it a try let me know how it goes. I will fix any bugs in the code that you might find and also add any features that might be missing.
+If you are ready to get started on the install of the app, review the [GettingStarted.md](Documentation/GettingStarted.md) in the Documentation folder.  In there you will find instructions on how to get all the various parts and pieces up and running on your machine.
