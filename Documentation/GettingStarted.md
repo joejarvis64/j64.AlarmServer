@@ -9,23 +9,23 @@ Eventually I will get these published on smart things but for now you have to ma
 
 Next, select the SmartApps option at the top of the web page to show all of the smart apps you have already installed.  Once there, click on the big green "New SmartApp" button on the right side of the page.
 
- ![Smart Apps Page](Documentation/images/SmartAppPicture.png)
+ ![Smart Apps Page](Images/SmartAppPicture.png)
 
 The next page that comes up will have a form to create a new smart app.  You should select the "From Code" option at the top of the page.
 
- ![New Smart Apps Page](images/NewSmartApp1.png "New Smart App Page")
+ ![New Smart Apps Page](Images/NewSmartApp1.png "New Smart App Page")
 
 That will open up a blank text box.  Copy all of the code from j64alarmSmartApp.goovy into that text box.  Then click the Create button at the bottom of the page.
 
 That will bring up the editor for the smart app.  At this point you will want to click the "Publish" button at the top of that page.  This will publish the smart app and make it avaialble for use under your personal ID.
 
- ![New Smart Apps Page](images/NewSmartApp2.png "Publish Page")
+ ![New Smart Apps Page](Images/NewSmartApp2.png "Publish Page")
 
 Now that you have published the app you will need to get an Oauth key that will be used down on step #9.  To do this click the "App Settings" button next the the publish button.  That will take you to the following page.  Open up the Oauth Section and click "Enable Oauth in Smart App" button. You will need the Oauth Client ID & Oauth Client Secret down in step #9.  
 
 Be sure to click the Update button at the bottom of this page or it will not actually save that Oauth information.
 
- ![Smart Apps Page](images/OauthExample.png "Oauth Example")
+ ![Smart Apps Page](Images/OauthExample.png "Oauth Example")
 
 
 # Step 4 - Install all of the j64 Device Types
@@ -47,7 +47,7 @@ The exact steps for this build will vary slightly depending on whether you are r
 1. Bring up a terminal session and change to the directory where you cloned the respository in step 2 above
 
 2. change to the src directory that contains each of the projects.  There are 3 projects that need to be restored and built.  It should look something like this:
- > ![Src Directory](images/srcdirectory.png "src directory")
+ > ![Src Directory](Images/srcdirectory.png "src directory")
  
 3. Next change to the j64.AlarmServer directory and restore it with this command:
   > dnu restore
@@ -58,7 +58,7 @@ The exact steps for this build will vary slightly depending on whether you are r
   > dnu build
   
   Again, you will see a bunch of messages flying across the screen.  The last messages displayed should indicate that it built successfully.
-   > ![Build Message](images/BuildSuccess.png "Build Mesasge")
+   > ![Build Message](Images/BuildSuccess.png "Build Mesasge")
    
 5. Restore & Build the Moon.AspNet.Authentication.Basic project
    ```
@@ -141,7 +141,7 @@ Now that you have a web server running, you can bring up a browser on the machin
 
 Log into the site with userId admin and password Admin_01.  Once logged in you should see a home screen that looks something like this:
 
- > ![Home Screen](images/SampleHomeScreen.png "Home Screen")
+ > ![Home Screen](Images/SampleHomeScreen.png "Home Screen")
  
  You can click on the "Hello admin!" button in the top right and change the password for the admin id.  This is definitely a recommended first step.  If you ever forget your password you can delete a file called j64.AlarmServer.db in the WebApi directory and restart the app.  That will reset the id to its default value.
 
@@ -151,7 +151,7 @@ Click on the "Configure" button at the top of the page.  That will bring you to 
 
 ** The disarm code and Envisalink Password will be stored in a file on your local pc called AlarmSystemInfo.json.   These are obviously codes you do not want to get out so should be protected accordingly.  This application does not send them off anywhere **
  
- > ![Sample Configure Screen](images/SampleConfigureScreen.png "Configure Screen")
+ > ![Sample Configure Screen](Images/SampleConfigureScreen.png "Configure Screen")
  
  
 When you go to the next step and install the smart app, it will create a device for every zone you have defined on this page.  So in this example it will create 5 contact device and 1 motion sensor device in smart things.  The contact devices are open/close type of switches (for example the windows are either opened or close).  Most sensors are a different type of device in Smart Things and indicate that some type of motion has been detected on that device.
@@ -166,25 +166,25 @@ Click on the "Install SmartApp" button at the top of the page.  This will bring 
 
 Paste in both the client key and secrect key.  Then click the "Begin Authorization" button.  
 
- > ![Install Smart App](images/InstallSmartAppScreen1.png "Install Smart App")
+ > ![Install Smart App](Images/InstallSmartAppScreen1.png "Install Smart App")
  
 This will take you to a SmartThings authorization screen.  If you are sent to a smart things error page it typically means that you have entered an invalid client key or secret key.  Double check you work from step #3 and make sure you actually enabled and updated the oauth key.  Also be sure to cut/paste since typing those guids is nearly impossible.
 
 The SmartThings authorization screen you see will look like this.  Select the hub you want to install this onto and then click the authoize button.  It can take 20-30 seconds for the authorization to happen so be patient.
 
- > ![Authorize Smart App](images/InstallSmartAppScreen2.png "Authorize  Smart App")
+ > ![Authorize Smart App](Images/InstallSmartAppScreen2.png "Authorize  Smart App")
  
  
  
  After you have successfully authorized you are redirected back to the j64AlarmServer web app.  It should say that you have succesfully authorized the smart app.  At this point, you can bring up your mobile app and you should see the j64 smart app and j64 device types installed.  Again, it will install and name the devices according to the information that you setup on the configure page.
 
-> ![Authorize Smart App](images/InstallSmartAppScreen3.png "Authorize  Smart App")
+> ![Authorize Smart App](Images/InstallSmartAppScreen3.png "Authorize  Smart App")
  
  # Step 10 - Test it out
  
  If you have reached this point everything should be ready to go.  Pull up your Smart Things mobile app and you should be able to find the devices in your "Things" section.  Everything is prefixed with j64 so they will all be grouped together.  
  
- > ![Mobile App](images/MobileAppThings.png "Mobile App")
+ > ![Mobile App](Images/MobileAppThings.png "Mobile App")
  
 Next go into the j64:Home Partition device That will take you to an area where you can see the status of the partition and arm or disarm it.  In this example, mine says "disarmed" and "zone not ready".  This is because the j64:Other Doors showed as Open.  My alarm system will not let me arm it if one of the zones is open.  So this is an accurate display.  If I were to close the Other Doors or bypass that zone I would then be able to arm the system.
 
