@@ -19,8 +19,6 @@ namespace j64.AlarmServer.WebApi.Controllers
 
         public IActionResult Index()
         {
-            ValidateSecurity.AllowLocalLan();
-
             return View(OauthRepository.Get());
         }
 

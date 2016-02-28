@@ -232,6 +232,10 @@ def refreshZone(zoneId) {
     hubApiGet("/api/AlarmSystem")
 }
 
+def bypassZone(zoneId) {
+    hubApiGet("/api/AlarmSystem/BypassZone/${zoneId}")
+}
+
 /* ************** */
 /* Initialization */
 /* ************** */

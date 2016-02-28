@@ -22,8 +22,6 @@ namespace j64.AlarmServer.WebApi.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult PartitionTest([Bind("PartitionId", "ReadyToArm", "IsArmed", "ArmingMode", "AlarmOn")] TestSendView sendInfo)
         {
-            ValidateSecurity.AllowLocalLan();
-
             // Find the partition info
             var pi = AlarmSystemRepository.Get().PartitionList.Find(x => x.Id == sendInfo.PartitionId);
             if (pi == null)
@@ -46,8 +44,6 @@ namespace j64.AlarmServer.WebApi.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ZoneTest([Bind("ZoneId", "ZoneStatus")] TestSendView sendInfo)
         {
-            ValidateSecurity.AllowLocalLan();
-
             var zi = AlarmSystemRepository.Get().ZoneList.Find(x => x.Id == sendInfo.ZoneId);
             if (zi == null)
                 throw new Exception("Invalid Zone ID");
@@ -66,8 +62,6 @@ namespace j64.AlarmServer.WebApi.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult RefreshDevices(TestSendView sendInfo)
         {
-            ValidateSecurity.AllowLocalLan();
-
             SmartThingsRepository.InstallDevices(this.Request.Host.Value);
             return View("index", sendInfo);
         }

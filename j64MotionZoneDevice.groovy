@@ -56,6 +56,10 @@ def setState(String newState) {
   }
 }
 
+def toggleBypass() {
+	parent.bypassZone(device.deviceNetworkId.replaceAll("zone",""))
+}
+
 def poll() {
 }
 

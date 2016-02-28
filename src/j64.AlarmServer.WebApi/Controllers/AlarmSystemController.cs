@@ -16,6 +16,14 @@ namespace j64.AlarmServer.WebApi.Controllers
         public string Route { get; set; }
         public T Response { get; set; }
     }
+    
+    public class AlarmDTO
+    {
+        public bool IsConnected;
+        
+        public List<PartitionInfo> Partitions;
+        public List<ZoneInfo> Zones;
+    }
 
     [Authorize(Roles = "ArmDisarm")]
     [Route("api/[controller]")]
@@ -32,11 +40,18 @@ namespace j64.AlarmServer.WebApi.Controllers
         [HttpGet]
         public IActionResult GetSystemStatus()
         {
-            return new ObjectResult(new MyResponse<AlarmSystemInfo>()
+            var asi = new AlarmSystemInfo(myAlarmSystem);
+            var adto = new AlarmDTO() {
+               IsConnected = asi.IsConnected,
+               Partitions = asi.Partitions,
+               Zones = asi.Zones
+            };
+            
+            return new ObjectResult(new MyResponse<AlarmDTO>()
             {
                 FromHost = Request.Host.Value,
                 Route = Request.Path.Value,
-                Response = new AlarmSystemInfo(myAlarmSystem)
+                Response = adto
             });
         }
 
@@ -99,7 +114,6 @@ namespace j64.AlarmServer.WebApi.Controllers
         [HttpGet("StayArm/{partitionId}")]
         public IActionResult StayArm(int partitionId)
         {
-            ValidateSecurity.AllowLocalLan();
             myAlarmSystem.StayArmSystem(partitionId);
             return new ObjectResult("issued");
         }
@@ -107,7 +121,6 @@ namespace j64.AlarmServer.WebApi.Controllers
         [HttpGet("AwayArm/{partitionId}")]
         public IActionResult AwayArm(int partitionId)
         {
-            ValidateSecurity.AllowLocalLan();
             myAlarmSystem.AwayArmSystem(partitionId);
             return new ObjectResult(new MyResponse<string>()
             {
@@ -120,7 +133,6 @@ namespace j64.AlarmServer.WebApi.Controllers
         [HttpGet("Disarm/{partitionId}")]
         public IActionResult Disarm(int partitionId)
         {
-            ValidateSecurity.AllowLocalLan();
             myAlarmSystem.DisArmSystem(partitionId);
 
             return new ObjectResult(new MyResponse<string>()
@@ -134,7 +146,6 @@ namespace j64.AlarmServer.WebApi.Controllers
         [HttpGet("SoundAlarm")]
         public IActionResult SoundAlarm()
         {
-            ValidateSecurity.AllowLocalLan();
             myAlarmSystem.SoundAlarm();
 
             return new ObjectResult(new MyResponse<string>()
@@ -148,7 +159,6 @@ namespace j64.AlarmServer.WebApi.Controllers
         [HttpGet("BypassZone/{zoneId}")]
         public IActionResult BypassZone(int zoneId)
         {
-            ValidateSecurity.AllowLocalLan();
             myAlarmSystem.BypassZone(zoneId);
 
             return new ObjectResult(new MyResponse<string>()

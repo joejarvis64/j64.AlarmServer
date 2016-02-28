@@ -28,7 +28,6 @@ namespace j64.AlarmServer.WebApi.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SaveChanges([Bind("Name", "ArmingCode", "Host", "Port", "User", "Password")] AlarmSystemInfo alarmInfo)
         {
-            ValidateSecurity.AllowLocalLan();
             myAlarmSystem.Name = alarmInfo.Name;
             myAlarmSystem.ArmingCode = alarmInfo.ArmingCode;
 
@@ -63,8 +62,6 @@ namespace j64.AlarmServer.WebApi.Controllers
 
         public IActionResult AddPartition()
         {
-            ValidateSecurity.AllowLocalLan();
-
             var maxId = 1;
             if (myAlarmSystem.PartitionList.Count > 0)
                 maxId = myAlarmSystem.PartitionList.Max(x => x.Id) + 1;
@@ -82,16 +79,12 @@ namespace j64.AlarmServer.WebApi.Controllers
 
         public IActionResult DeletePartition(int id)
         {
-            ValidateSecurity.AllowLocalLan();
-
             var zonesDeleted = myAlarmSystem.PartitionList.RemoveAll(p => p.Id == id);
             return View("Index", new AlarmSystemInfo(myAlarmSystem));
         }
 
         public IActionResult AddZone()
         {
-            ValidateSecurity.AllowLocalLan();
-
             var maxId = 1;
             if (myAlarmSystem.ZoneList.Count > 0)
                 maxId = myAlarmSystem.ZoneList.Max(x => x.Id) + 1;
@@ -110,8 +103,6 @@ namespace j64.AlarmServer.WebApi.Controllers
 
         public IActionResult DeleteZone(int id)
         {
-            ValidateSecurity.AllowLocalLan();
-
             var zonesDeleted = myAlarmSystem.ZoneList.RemoveAll(z => z.Id == id);
             return View("Index", new AlarmSystemInfo(myAlarmSystem));
         }
