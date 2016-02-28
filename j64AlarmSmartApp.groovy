@@ -19,9 +19,7 @@ definition(
 	name: "j64 Alarm",
 	namespace: "j64",
 	author: "Joe Jarvis",
-	description: "Integrate your Envisalink/DSC alarm system with SmartThings using the j64 Alarm Server.  
-                   This integration allows you to incorporate and control your existing motion sensors, contact sensors
-                   and alarms from the SmartThings Hub.",
+	description: "Integrate your Envisalink/DSC alarm system with SmartThings using the j64 Alarm Server. This integration allows you to incorporate and control your existing motion sensors, contact sensors and alarms from the SmartThings Hub.",
 	category: "SmartThings Labs",
         iconUrl: "http://cdn.device-icons.smartthings.com/Home/home3-icn.png",
         iconX2Url: "http://cdn.device-icons.smartthings.com/Home/home3-icn@2x.png",
