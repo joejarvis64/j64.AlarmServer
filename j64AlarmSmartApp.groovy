@@ -19,7 +19,9 @@ definition(
 	name: "j64 Alarm",
 	namespace: "j64",
 	author: "Joe Jarvis",
-	description: "Control your envisalink alarm using j64 Alarm Server",
+	description: "Integrate your Envisalink/DSC alarm system with SmartThings using the j64 Alarm Server.  
+                   This integration allows you to incorporate and control your existing motion sensors, contact sensors
+                   and alarms from the SmartThings Hub.",
 	category: "SmartThings Labs",
         iconUrl: "http://cdn.device-icons.smartthings.com/Home/home3-icn.png",
         iconX2Url: "http://cdn.device-icons.smartthings.com/Home/home3-icn@2x.png",
@@ -27,16 +29,27 @@ definition(
 )
 
 mappings {
+    /* installDevices is called by the j64 Alarm Server and passes information about
+       the various partitions and zones that are defined in your security system.  No
+       security or arming codes are transmitted into or stored by this service */
     path("/installDevices") {
         action: [
             POST: "installDevices",
         ]
     }
+    
+    /* UpdatePartition is called by the j64 Alarm Server when the status of the
+       partition has changed.  This information is then propogated to the various
+       child devices so it can be reflected in the mobile app  */
     path("/UpdatePartition") {
         action: [
             POST: "updatePartition"
         ]
     }
+    
+    /* UpdateZone is called by the j64 Alarm Server when the status of a zone 
+       has changed.  This information is then propogated to the various child
+       devices so it can be reflected in the mobile app */
     path("/UpdateZone") {
         action: [
             POST: "updateZone"
@@ -44,9 +57,9 @@ mappings {
     }
 }
 
-/* *************** */
-/* Install Methods */
-/* *************** */
+/* *********************************** */
+/* Install or update the child devices */
+/* *********************************** */
 def installDevices() {
     state.j64Server = params.j64Server
     state.j64Port = params.j64Port
@@ -79,9 +92,7 @@ def installAllDevices(partitions, zones) {
         partitionDevice.setAlarm(p.InAlarm, p.IsArmed)
         partitionDevice.setMode(p.ArmingMode, p.ReadyToArm)
         
-        // **
         // Add an alarm device for this partition
-        // **
 		networkId = "alarm" + p.Id
         def alarmDevice = children.find { item -> item.device.deviceNetworkId == networkId }
         name = "j64:" + p.Name + " Alarm"
@@ -117,7 +128,7 @@ def installAllDevices(partitions, zones) {
 			zoneDevice.name = name
             zoneDevice.label = name
             
-            // Cannot change the device type via the API
+            // Note: we cannot change the device type via the API
             //zoneDevice.typeName = zoneType
         }
         
@@ -148,9 +159,9 @@ def installAllDevices(partitions, zones) {
 	}
 }
 
-/* ***************** */
-/* Partition Methods */
-/* ***************** */
+/* *********************************** */
+/* Update the status of the partition  */
+/* *********************************** */
 def updatePartition(evt) {
     def Id = params.Id
 	def Name = params.Name
@@ -192,6 +203,7 @@ def updatePartition(evt) {
 	}
 }
 
+/* These methods call the j64 Alarm Server and arm or disarm the partiion */
 def armPartition(partitionId, stayAway) {
 	if (stayAway == "away")
 	    hubApiGet("/api/AlarmSystem/AwayArm/${partitionId}")
@@ -211,9 +223,9 @@ def refreshPartition(partitionId) {
     hubApiGet("/api/AlarmSystem")
 }
 
-/* ************ */
-/* Zone Methods */
-/* ************ */
+/* ****************************** */
+/* Update the status of the zone  */
+/* ****************************** */
 def updateZone(evt) {
     def Id = params.Id
     def Name = params.Name
@@ -228,12 +240,13 @@ def updateZone(evt) {
 	}
 }
 
-def refreshZone(zoneId) {
-    hubApiGet("/api/AlarmSystem")
-}
-
+/* These methods call the j64 Alarm Server to bypass the zone so the partition can be armed  */
 def bypassZone(zoneId) {
     hubApiGet("/api/AlarmSystem/BypassZone/${zoneId}")
+}
+
+def refreshZone(zoneId) {
+    hubApiGet("/api/AlarmSystem")
 }
 
 /* ************** */
@@ -262,13 +275,15 @@ def refresh() {
     hubApiGet("/api/AlarmSystem")
 }
 
-/* ************************************ */
-/* Handle event from the j64AlarmServer */ 
-/* on the local LAN                     */
-/* ************************************ */
+/* ***************************************************** */
+/* Handle event from the j64AlarmServer on the local LAN */
+/* ***************************************************** */
 def localLanHandler(evt) {
+
 	// Only handle messages from the j64AlarmServer
 	def msg = parseLanMessage(evt.description)
+    
+    // The request must be valid json format
 	if (msg.json == null) {
 	    return
     }
@@ -276,10 +291,12 @@ def localLanHandler(evt) {
     def FromHost = msg.json.FromHost
     def Route = msg.json.Route
     
+    // The request must have a from host property that matches the alarm server
     if (FromHost != j64AlarmServerAddress()) {
 	    return
     }
-    
+
+    // Ensure that the route property passed from the j64 server is what we expect     
     if (Route == "/api/AlarmSystem")
        installAllDevices(msg.json.Response.Partitions, msg.json.Response.Zones)
 }
@@ -288,9 +305,9 @@ def j64AlarmServerAddress() {
 	return state.j64Server + ":" + state.j64Port
 }
 
-/* ********************************** */
-/* Handle event when the mode changes */
-/* ********************************** */
+/* ************************************** */
+/* Handle event when the SHM mode changes */
+/* ************************************** */
 def shmModeChangeHandler(evt) {
 
 	// Unfortunately we have to assume partition 1 for the smart home monitor since it does not support
