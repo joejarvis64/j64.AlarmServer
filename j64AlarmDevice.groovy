@@ -39,7 +39,7 @@ metadata {
 }
 
 def setAlarm(String alarmOn) {
-  def ns = alarmOn.toLowerCase()
+  def ns = alarmOn?.toLowerCase()
   if (ns == "true") {
 		sendEvent (name: "alarm", value: "siren")
   } else {

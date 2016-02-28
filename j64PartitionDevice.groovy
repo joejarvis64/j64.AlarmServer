@@ -25,6 +25,7 @@ metadata {
         command "awayArmPartition"
         command "stayArmPartition"
         command "disarmPartition"
+        command "soundAlarm"
     }
 
 	simulator {
@@ -49,7 +50,15 @@ metadata {
     standardTile("disarm", "device.alarm", decoration: "flat") {
       state("default", label:'Dis Arm', action:"disarmPartition", icon:"st.Electronics.electronics6", defaultState: true)
     }
+    
+    standardTile("soundAlarm", "device.alarm", decoration: "flat", width: 2, height: 1) {
+      state("default", label:'Sound Alarm', action:"soundAlarm", icon:"st.Electronics.electronics19", defaultState: true)
+    }
 
+    standardTile("refresh", "device.alarm", decoration: "flat") {
+      state("default", label:'', action:"refresh", icon:"st.secondary.refresh", defaultState: true)
+    }
+    
     valueTile("mode", "device.mode", width: 2, height: 1, canChangeBackground: true, canChangeIcon: true, decoration: "flat") {
       state "Exit Delay",      label: '${currentValue}', backgroundColor: "#ffffff"
       state "Entry Delay",     label: '${currentValue}', backgroundColor: "#ffffff"
@@ -65,7 +74,7 @@ metadata {
     main "alarm"
 
     // These tiles will be displayed when clicked on the device, in the order listed here.
-    details(["alarm", "awayArm", "stayArm", "mode", "disarm"])
+    details(["alarm", "awayArm", "stayArm", "mode", "disarm", "soundAlarm", "refresh"])
     }
 }
 
@@ -120,6 +129,11 @@ def stayArmPartition(val) {
 def disarmPartition() {
 	log.debug "Disarm requested"
 	parent.disarmPartition(device.deviceNetworkId.replaceAll("partition",""))
+}
+
+def soundAlarm() {
+	log.debug "Sound alarm requested"
+	parent.soundAlarm(device.deviceNetworkId.replaceAll("partition",""))
 }
 
 def poll() {
