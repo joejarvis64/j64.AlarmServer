@@ -1,6 +1,17 @@
 # Step 1 - Install the Asp.NetCore Framework
 Go to http://get.asp.net and install a copy of the dot net core framework on the machine you will use to run j64AlarmServer.  It is a pretty easy install process, just click the "Install for Mac" or "Install for Windows" button and run the executable that is downloaded.
 
+If you are installing windows you may need to take a couple of extra steps to get everything running properly.  In my case I had do these extra step:
+
+1. Goto get.asp.net and click "Install for Windows" button and run the executable that it downloaded
+2. Reboot windows so the environment will be set properly
+3. After restarting, open a command prompt and run these commands:
+  * dnvm upgrade  (this will get dnx and dnu install properly)
+  * dnvm install latest -r coreclr  (this will get dotnetcore installed)
+
+After that everything ran fine for me from the command line in windows.
+
+
 # Step 2 - Download a copy of the j64AlarmServer
 I do not have a installer package yet so you will need to download and install it manually.  You will need to be familiar with github to do this.  The easiest way is to clone a copy of the repository into a directory on your machine.  There is also an option to download a zip file from there at which you would just unzip it onto your local machine.  The github repository for j64AlarmServer is located here: https://github.com/joejarvis64/j64.AlarmServer.git
 
