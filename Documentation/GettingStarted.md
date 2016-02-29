@@ -1,14 +1,20 @@
+# Pre-Reqs
+You should already have a DSC alarm system with the Envisalink controller up and running.  You should be able to login to the envisalink controller and arm/disarm the system.  Without that basic capability this aint gonna work.   
+
+This program only works with the DSC security system.  Honeywell is a different TPI protocol and this program does not talk that language.  I would definitely be interested in building that interface if there is interest. 
+
 # Step 1 - Install the Asp.NetCore Framework
 Go to http://get.asp.net and install a copy of the dot net core framework on the machine you will use to run j64AlarmServer.  It is a pretty easy install process, just click the "Install for Mac" or "Install for Windows" button and run the executable that is downloaded.
 
-If you are installing windows you may need to take a couple of extra steps to get everything running properly.  In my case I had do these extra step:
+If you are installing windows you may need to take a couple of extra steps to get everything running properly.  In my case I had do this:
 
-1. Goto get.asp.net and click "Install for Windows" button and run the executable that it downloaded
+1. Goto get.asp.net and click the Asp.Net RC 5 "Install for Windows" button and run the executable that it downloaded
 2. Reboot windows so the environment will be set properly
 3. After restarting, open a command prompt and run these commands:
   * dnvm upgrade  (this will get dnx and dnu install properly)
   * dnvm install latest -r coreclr  (this will get dotnetcore installed)
-
+  * dnvm use 1.0.0-rc1-update1 -r coreclr -p
+  
 After that everything ran fine for me from the command line in windows.
 
 
@@ -145,6 +151,9 @@ One thing to notice is the line near the bottom that show what port it is listen
 ```
 Now listening on: http://0.0.0.0:2064
 ```
+
+**Important**: if you are on windows and you get a message asking you to allow firewall access be sure to click allow access.  If you say no, the smart things hub will not be able to talk with the j64AlarmServer web app.
+
 
 # Step 7 - Open the App
 

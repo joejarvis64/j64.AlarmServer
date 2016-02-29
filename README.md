@@ -1,8 +1,8 @@
 # j64.AlarmServer
-A Server to integrate the Envisalink DSC controller with Smart Things
+A Server to integrate the Envisalink *DSC* controller with Smart Things
 
-This server allows you to integrate the EnvisaLink DSC controller with the Smart Things Hub.  Once
-integrated you are able to control you security system from the smart things hub and begin to do
+This server allows you to integrate the EnvisaLink DSC controller with the Smart Things Hub. Once
+integrated you will able to control you security system from the smart things hub and do
 things like automatically turning security on when you leave, incorporate your motion sensors into
 smart things routines (turn lights on when motion is detected), integrate turning your security system on and off via the amazon echo and many other things.
 
@@ -21,3 +21,6 @@ The smart things mobile app allows the user to trigger actions such as arming th
 There is obviously alot more to how this all works.  You are encouraged to look at the code, make enhancements or suggest how I can improve on it.
 
 If you are ready to get started on the install of the app, review the [GettingStarted.md](Documentation/GettingStarted.md) in the Documentation folder.  In there you will find instructions on how to get all the various parts and pieces up and running on your machine.
+
+
+NOTE: this server does not work with the honeywell controller.
