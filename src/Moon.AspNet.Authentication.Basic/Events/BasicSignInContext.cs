@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace Moon.AspNet.Authentication.Basic
 {

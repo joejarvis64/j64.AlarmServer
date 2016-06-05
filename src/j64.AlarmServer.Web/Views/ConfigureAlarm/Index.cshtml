@@ -1,0 +1,101 @@
+@model j64.AlarmServer.Web.Models.AlarmSystemInfo
+@{
+    ViewData["Title"] = "Configure Alarm System";
+}
+<style>
+    .table { margin-bottom: 0px; }
+    .panel-heading { font-weight: bold; }
+    label, th { font-weight: normal; }
+    select { margin-top: 5px; }
+</style>
+<form class="form" asp-controller="ConfigureAlarm" asp-action="SaveChanges" method="post" >
+    <div class='row'>
+        <div class='col-md-6'>
+        <div class="panel panel-default">
+            <div class="panel-heading">  
+                Alarm System Information
+                <div style='float:right'><button class="btn btn-primary btn-xs" type="submit">Save All Changes&nbsp;&nbsp;<i class="fa fa-floppy-o"></i></button></div>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                        <label asp-for="Name">System Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="Name your system" />
+                </div>
+                <div class="form-group">
+                        <label asp-for="ArmingCode">Disarm Code</label>
+                        <input asp-for="ArmingCode" class="form-control" placeholder="Alarm system code" />
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">  
+                Envisalink/TPI Information
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label asp-for="Host">Host Name</label>
+                    <input asp-for="Host" class="form-control" placeholder="Name or IP for TPI" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Port">TCP Port #</label>
+                    <input asp-for="Port" class="form-control" placeholder="" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="User">User</label>
+                    <input asp-for="User" class="form-control" placeholder="" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password">Password</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="" />
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class='col-md-6'>
+        <div class="panel panel-default">
+            <div class="panel-heading">  
+                Define your partitions
+                <a style='float:right' class="btn btn-primary btn-xs" asp-action="AddPartition">Add Partition&nbsp;<i class="fa fa-plus-circle"></i></a>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    @foreach (var partition in Model.Partitions)
+                    {
+                        <tr>
+                            <td><input asp-for="@partition.Id" readonly="readonly" style='width: 2em'/></td>
+                            <td><input asp-for="@partition.Name" /></td>
+                            <td>
+                                <a class="btn btn-default" asp-action="DeletePartition" asp-route-id="@partition.Id"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">  
+                Define your Zones Information
+                <a style='float:right' class="btn btn-primary btn-xs" asp-action="AddZone">Add Zone&nbsp;<i class="fa fa-plus-circle"></i></a>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    @foreach (var zone in Model.Zones)
+                    {
+                        <tr>
+                            <td><input asp-for="@zone.Id" readonly="readonly"  style='width: 2em' /></td>
+                            <td><input asp-for="@zone.Name" style='width: 15em'/>
+                                <select asp-for="@zone.ZoneType" class="form-control" style='width: 10em'>
+                                    <option>Contact</option>
+                                    <option>Motion</option>
+                                </select>
+                            </td>
+                            <td>
+                                <a class="btn btn-default" asp-action="DeleteZone" asp-route-id="@zone.Id"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+        </div>
+    </div>
+        </div>
+</form>

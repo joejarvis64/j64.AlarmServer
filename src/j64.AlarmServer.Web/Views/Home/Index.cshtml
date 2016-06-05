@@ -1,0 +1,145 @@
+﻿@model j64.AlarmServer.Web.Models.AlarmSystemInfo
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        @if (Model.IsConnected == false)
+        {
+            <br />
+            <p class="lead">
+                You have not yet connected to the TPI.  This generally happens because the TPI Host/Port are not set properly in the
+                configuration.  You can go to the <a href="ConfigureAlarm">Configure Alarm System</a> menu option to input the correct information.
+                You can also check the <a href="LogViewer">View Log</a> menu option for additional information.
+            </p>
+        }
+        else
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class='col-xs-10'>
+                            @if (Model.IsConnected)
+                            { <span>Connected to </span> }
+                            else
+                            { <span>Not Connected to</span> } @Model.Host:@Model.Port
+                        </div>
+                        <div class='col-xs-2'>
+                            @if (Model.Partitions.Count > 0 && !Model.Partitions[0].AlarmOn)
+                            {
+                                <a style='float:right' class='btn btn-primary btn-xs' asp-action="SoundAlarm" asp-route-id="0">Sound Alarm&nbsp;<i class="fa fa-bullhorn"></i></a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover" style='margin-bottom: 0px'>
+                        <tbody>
+                            @foreach (var p in Model.Partitions)
+                            {
+                                <tr>
+                                    <td style='border-top: 0px'>
+                                        @if (p.ReadyToArm && !p.IsArmed && !p.AlarmOn)
+                                        {
+                                            <i class='fa fa-check-square-o' style='color:green'></i>
+                                        }
+                                        else if (p.IsArmed)
+                                        {
+                                            <i class="fa fa-bell-o fa-2x" style='color:red; top: 14px; position: relative;'></i>
+                                        }
+                                        else
+                                        {
+                                            <i class='fa fa-exclamation-triangle' style='color:red'></i>
+                                        }
+                                        @p.Name Partition
+                                        <div style='margin-left: 30px; font-style: italic'>@p.ArmingMode</div>
+                                    </td>
+                                    <td style='border-top: 0px; text-align: right;'>
+                                        @if (p.ReadyToArm && !p.IsArmed && !p.AlarmOn)
+                                        {
+                                            <a class="btn btn-primary btn-xs" asp-action="StayArm" asp-route-id="@p.Id">Stay Arm&nbsp;<i class='fa fa-home'></i></a>
+                                            <a class="btn btn-primary btn-xs" asp-action="AwayArm" asp-route-id="@p.Id">Away Arm&nbsp;<i class="fa fa-car"></i></a>
+                                        }
+                                        @if (p.IsArmed || p.AlarmOn)
+                                        {
+                                            <a class='btn btn-primary btn-xs' asp-action="Disarm" asp-route-id="@p.Id">Disarm</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Zones
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover" style='margin-bottom: 0px'>
+                        <tbody>
+                            @foreach (var z in Model.Zones)
+                            {
+                                <tr>
+                                    <td style='border-top: 0px'>
+                                        @if (z.Status == "Open")
+                                        { <i style='color:red' class='fa fa-exclamation-triangle'></i> }
+                                        else
+                                        { <i class='fa fa-check-square-o' style='color:green'></i> }
+                                        <span title="@z.TimeSinceLastClose">@z.Name</span>
+                                        @if (z.Status == "Open")
+                                        {
+                                            @if (Model.Partitions.Count > 0 && Model.Partitions[0].BypassActive)
+                                            {
+                                                <a style='float:right' class='btn btn-primary btn-xs' asp-action='BypassZone' asp-route-id='0' title='Clear all zones that are bypassed'>Clear Bypass</a>
+                                            }
+                                            else
+                                            {
+                                                <a style='float:right' class='btn btn-primary btn-xs' asp-action='BypassZone' asp-route-id='@z.Id' title='Bypass status for this zone'>Bypass Zone</a>
+                                            }
+                                            <div style='margin-left: 30px; font-style: italic'>Currently Open</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+    @if (await AuthorizationService.AuthorizeAsync(User, null, "ArmDisarm"))
+    {
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    TPI Log
+                    <a class="btn btn-primary btn-xs" asp-action='Refresh' title='Refresh log information' style='float: right'>Refresh&nbsp;<i class="fa fa-refresh"></i></a>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        @foreach (var msg in Model.LogMessages)
+                        {
+                            <tr>
+                                <td>
+                                    <div style="overflow-x:auto">
+                                        @if (msg.Type == "ERROR")
+                                        { <i class='fa fa-exclamation-triangle' style='color:red'></i> }
+                                        @msg.Date <br />
+                                        @if (msg.Direction == "in")
+                                        { <i class='fa fa-long-arrow-right'></i> }
+                                        @if (msg.Direction == "out")
+                                        { <i class='fa fa-long-arrow-left'></i> }
+                                        @msg.Message
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

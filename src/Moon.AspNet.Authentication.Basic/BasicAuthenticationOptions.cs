@@ -1,5 +1,6 @@
-using Microsoft.AspNet.Authentication;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Options;
 
 namespace Moon.AspNet.Authentication.Basic
 {

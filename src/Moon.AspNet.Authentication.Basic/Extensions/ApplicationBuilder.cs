@@ -1,6 +1,7 @@
 ﻿using System;
 using Moon;
 using Moon.AspNet.Authentication.Basic;
+using Microsoft.AspNetCore.Builder;
 
 namespace Microsoft.AspNet.Builder
 {

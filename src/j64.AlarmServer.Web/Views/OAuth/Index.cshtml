@@ -1,0 +1,38 @@
+﻿@model j64.AlarmServer.Web.Models.OauthInfo
+@{
+    ViewData["Title"] = "Authorize Your Smart App";
+}
+<style>
+    .panel-heading { font-weight: bold; }
+    label, th { font-weight: normal; }
+</style>
+
+<form asp-controller="OAuth" asp-action="BeginAuth" method="post">
+    <div class="panel panel-default">
+        <div class="panel-heading">  
+            Enter your client key and secret key from the smarthings IDE 
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label asp-for="clientKey">SmartApp Client Key</label>
+                <input asp-for="clientKey" class="form-control" placeholder="smartapp client key" />
+            </div>
+            <div class="form-group">
+                <label asp-for="secretKey">SmartApp Secret Key</label>
+                <input asp-for="secretKey" class="form-control" placeholder="smartapp secret key" />
+            </div>
+            <button class="btn btn-primary btn-xs" type="submit">Begin Authorization</button>
+        </div>
+    </div>
+    @if (String.IsNullOrEmpty(Model.accessToken) == false)
+    {
+        <p style='font-size: small; font-style: italic; margin-left: 20px; margin-right: 20px;'>
+            Note: You have already obtained an authorization key so it is not necesasry to
+            re-authorize this app with smart things.  If your client or secret
+            key has changed or you are experiencing issues synchronizing with smart things, 
+            you can run back through this authorization process to obtain a new
+            authorization token.  It does not cause an issue to re-authorize the app
+            even if the existing authorization key is valid.</p>    
+    }
+</form>
+

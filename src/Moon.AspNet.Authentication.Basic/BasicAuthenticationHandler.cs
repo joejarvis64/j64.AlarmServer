@@ -2,9 +2,9 @@ using System;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Authentication;
-using Microsoft.AspNet.Http.Authentication;
-using Microsoft.AspNet.Http.Features.Authentication;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Http.Features.Authentication;
 
 namespace Moon.AspNet.Authentication.Basic
 {
@@ -44,7 +44,7 @@ namespace Moon.AspNet.Authentication.Basic
             }
             catch (Exception ex)
             {
-                return AuthenticateResult.Failed(ex);
+                return AuthenticateResult.Fail(ex);
             }
         }
 

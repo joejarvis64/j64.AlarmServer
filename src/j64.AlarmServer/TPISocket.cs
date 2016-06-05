@@ -117,8 +117,9 @@ namespace j64.AlarmServer
         public void Disconnect()
         {
             _shutdown = true;
-            _client.Client.Shutdown(SocketShutdown.Both);
-            _client.Client.Dispose();
+            _client.Dispose();
+            //_client.Client.Shutdown(SocketShutdown.Both);
+            //_client.Client.Dispose();
         }
 
         private void EnsureConnection()
@@ -136,7 +137,7 @@ namespace j64.AlarmServer
                         // Clean up anything that is outstanding
                         if (_client != null)
                         {
-                            _client.Client.Shutdown(SocketShutdown.Both);
+                            //_client.Client.Shutdown(SocketShutdown.Both);
                             _client.Dispose();
                         }
 
