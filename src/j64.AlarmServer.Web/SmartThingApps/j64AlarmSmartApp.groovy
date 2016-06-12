@@ -64,6 +64,8 @@ def installDevices() {
     state.j64User = params.j64UserName
     state.j64Password = params.j64Password
     
+	log.debug "Install Devices from ${state.j64Server}:${state.j64Port} using id ${state.j64User}"
+
     hubApiGet("/api/AlarmSystem")
 }
 
@@ -84,6 +86,7 @@ def installAllDevices(partitions, zones) {
         	// Try to update the name of the partition
 			partitionDevice.name = name
             partitionDevice.label = name
+        	log.debug "Update Partition: ${name} => ${networkId}"
         }
             
         // always set the current status for the partition
@@ -126,6 +129,8 @@ def installAllDevices(partitions, zones) {
 			zoneDevice.name = name
             zoneDevice.label = name
             
+        	log.debug "Update Zone: ${name} => ${networkId}"
+
             // Note: we cannot change the device type via the API
             //zoneDevice.typeName = zoneType
         }
