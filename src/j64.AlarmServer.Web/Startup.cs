@@ -37,6 +37,7 @@ namespace j64.AlarmServer.Web
 
             // Setup up the config file paths
             Repository.AlarmSystemRepository.RepositoryFile = $"{env.WebRootPath}/AlarmSystemInfo.json";
+            Repository.OauthRepository.RepositoryFile = $"{env.WebRootPath}/SmartThings.json";
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();

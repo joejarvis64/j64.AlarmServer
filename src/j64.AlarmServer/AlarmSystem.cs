@@ -75,6 +75,18 @@ namespace j64.AlarmServer
         public string Password { get; set; } = "user";
 
         /// <summary>
+        /// The server where the j64 api alarm server is running
+        /// (this needs to be refactored into another class!)
+        /// </summary>
+        public string j64Server { get; set; }
+
+        /// <summary>
+        /// The tcp port where the j64 api alarm server is running
+        /// (this needs to be refactored into another class!)
+        /// </summary>
+        public string j64Port { get; set; }
+
+        /// <summary>
         /// The code used to arm/disarm the system
         /// </summary>
         public string ArmingCode { get; set; }

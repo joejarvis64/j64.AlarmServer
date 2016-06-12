@@ -7,6 +7,26 @@
     label, th { font-weight: normal; }
 </style>
 
+<form asp-controller="OAuth" asp-action="CreateSmartApp" method="post">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            If you want this app to automatically add the smart app and device types, supply your SmartThings id/password
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label asp-for="STUserId">Smartthings ID</label>
+                <input asp-for="STUserId" class="form-control" placeholder="Smart Things User ID" />
+                <span asp-validation-for="STUserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="STPassword">SmartThings Password</label>
+                <input asp-for="STPassword" class="form-control" placeholder="Smart Things Password" type="password" />
+                <span asp-validation-for="STPassword" class="text-danger"></span>
+            </div>
+            <button class="btn btn-primary btn-xs" type="submit">Create App/Devices</button>
+        </div>
+    </div>
+</form>
 <form asp-controller="OAuth" asp-action="BeginAuth" method="post">
     <div class="panel panel-default">
         <div class="panel-heading">  

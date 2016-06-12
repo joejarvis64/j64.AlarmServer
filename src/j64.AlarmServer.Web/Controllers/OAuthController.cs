@@ -6,14 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace j64.AlarmServer.Web.Controllers
 {
     [Authorize(Roles = "ManageConfig")]
     public class OAuthController : Controller
     {
-        public OAuthController()
+        IHostingEnvironment myEnv;
+
+        public OAuthController(IHostingEnvironment env)
         {
+            this.myEnv = env;
         }
 
         public IActionResult Index()
@@ -37,6 +42,36 @@ namespace j64.AlarmServer.Web.Controllers
             string Url = $"https://graph.api.smartthings.com/oauth/authorize?response_type=code&scope=app&redirect_uri={authorizedUrl}&client_id={authInfo.clientKey}";
 
             return Redirect(Url);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateSmartApp(OauthInfo authInfo)
+        {
+            if (ModelState.IsValid == false)
+                return View(authInfo);
+
+            var conn = new SmartThingsConnection();
+            if (await conn.Login(authInfo.STUserId, authInfo.STPassword) == false)
+            {
+                ModelState.AddModelError("STPassword", "Could not connect to smart things using the supplied credentials");
+                return View("Index", authInfo);
+            }
+
+            var cs = new DeviceTypeRepository(conn, "j64 Alarm", $"{myEnv.WebRootPath}/../SmartThingApps/j64AlarmDevice.groovy");
+            var ss = new DeviceTypeRepository(conn, "j64 Contact Zone", $"{myEnv.WebRootPath}/../SmartThingApps/j64ContactZoneDevice.groovy");
+            var mz = new DeviceTypeRepository(conn, "j64 Motion Zone", $"{myEnv.WebRootPath}/../SmartThingApps/j64MotionZoneDevice.groovy");
+            var pd = new DeviceTypeRepository(conn, "j64 Partition", $"{myEnv.WebRootPath}/../SmartThingApps/j64PartitionDevice.groovy");
+
+            var jal = new SmartAppRepository(conn, "j64 Alarm", $"{myEnv.WebRootPath}/../SmartThingApps/j64AlarmSmartApp.groovy");
+
+            // Save the client/secret keys
+            var oauth = OauthRepository.Get();
+            oauth.clientKey = jal.clientKey;
+            oauth.secretKey = jal.secretKey;
+            OauthRepository.Save(oauth);
+
+            return View("Index", oauth);
         }
 
         public IActionResult Authorized(string code)

@@ -23,6 +23,8 @@ namespace j64.AlarmServer.Web.Models
             User = myAlarmSystem.User;
             Password = myAlarmSystem.Password;
             IsConnected = myAlarmSystem.IsConnectedToTpi;
+            j64Host = myAlarmSystem.j64Server;
+            j64Port = myAlarmSystem.j64Port;
 
             myAlarmSystem.PartitionList.ForEach(p => Partitions.Add(new PartitionInfo(p)));
             myAlarmSystem.ZoneList.ForEach(z => Zones.Add(new ZoneInfo(z)));
@@ -36,6 +38,9 @@ namespace j64.AlarmServer.Web.Models
 
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        public string j64Host { get; set; }
+        public string j64Port { get; set; }
 
         public bool IsConnected { get; set; } = false;
 

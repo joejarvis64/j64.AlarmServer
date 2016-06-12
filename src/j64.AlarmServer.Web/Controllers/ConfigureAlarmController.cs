@@ -40,6 +40,9 @@ namespace j64.AlarmServer.Web.Controllers
                 if (!String.IsNullOrEmpty(alarmInfo.Password))
                     myAlarmSystem.Password = alarmInfo.Password;
 
+                myAlarmSystem.j64Server = alarmInfo.j64Host;
+                myAlarmSystem.j64Port = alarmInfo.j64Port;
+
                 for (int i = 0; i < Request.Form["partition.Id"].Count; i++)
                 {
                     var partition = myAlarmSystem.PartitionList.Find(p => p.Id.ToString() == Request.Form["partition.Id"][i]);
@@ -59,6 +62,9 @@ namespace j64.AlarmServer.Web.Controllers
 
                 // this will update the existing devices on the smartthings hub
                 SmartThingsRepository.InstallDevices(this.Request.Host.Value);
+
+                // Add the partition/zone info to the alarm model we are returning
+                alarmInfo = new AlarmSystemInfo(myAlarmSystem);
             }
 
             return View("index", alarmInfo);
@@ -108,6 +114,14 @@ namespace j64.AlarmServer.Web.Controllers
         public IActionResult DeleteZone(int id)
         {
             var zonesDeleted = myAlarmSystem.ZoneList.RemoveAll(z => z.Id == id);
+            return View("Index", new AlarmSystemInfo(myAlarmSystem));
+        }
+
+        public IActionResult Findj64Address()
+        {
+            var asi = SmartThingsRepository.Determinej64ServerAddress(this.Request.Host.Value);
+            myAlarmSystem.j64Server = asi.j64Server;
+            myAlarmSystem.j64Port = asi.j64Port;
             return View("Index", new AlarmSystemInfo(myAlarmSystem));
         }
     }

@@ -118,22 +118,9 @@ namespace j64.AlarmServer.Web.Repository
         {
             try
             {
-                string[] h = hostString.Split(':');
-                string j64Server = h[0];
-                int j64Port = 80;
-                if (h.Length > 1)
-                    j64Port = Convert.ToInt32(h[1]);
-
-                var hostName = System.Net.Dns.GetHostEntryAsync(System.Net.Dns.GetHostName());
-                hostName.Wait();
-                foreach (var i in hostName.Result.AddressList)
-                {
-                    if (i.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                    {
-                        j64Server = i.ToString();
-                        break;
-                    }
-                }
+                var alarm = AlarmSystemRepository.Get();
+                if (string.IsNullOrEmpty(alarm.j64Server) || string.IsNullOrEmpty(alarm.j64Port))
+                    Determinej64ServerAddress(hostString);
 
                 OauthInfo authInfo = OauthRepository.Get();
 
@@ -150,8 +137,8 @@ namespace j64.AlarmServer.Web.Repository
                 msg.Headers.Add("Authorization", $"Bearer {authInfo.accessToken}");
 
                 List<KeyValuePair<string, string>> parms = new List<KeyValuePair<string, string>>();
-                parms.Add(new KeyValuePair<string, string>("j64Server", j64Server));
-                parms.Add(new KeyValuePair<string, string>("j64Port", j64Port.ToString()));
+                parms.Add(new KeyValuePair<string, string>("j64Server", alarm.j64Server));
+                parms.Add(new KeyValuePair<string, string>("j64Port", alarm.j64Port));
                 parms.Add(new KeyValuePair<string, string>("j64UserName", "admin"));
                 parms.Add(new KeyValuePair<string, string>("j64Password", "Admin_01"));
                 msg.Content = new System.Net.Http.FormUrlEncodedContent(parms);
@@ -167,6 +154,34 @@ namespace j64.AlarmServer.Web.Repository
             {
                 MyLogger.LogError($"Error installing smart things devices.  Exception was {MyLogger.ExMsg(ex)}");
             }
+        }
+
+        public static AlarmSystem Determinej64ServerAddress(string hostString)
+        {
+            string[] h = hostString.Split(':');
+            string j64Server = h[0];
+            int j64Port = 80;
+            if (h.Length > 1)
+                j64Port = Convert.ToInt32(h[1]);
+
+            var hostName = System.Net.Dns.GetHostEntryAsync(System.Net.Dns.GetHostName());
+            hostName.Wait();
+            foreach (var i in hostName.Result.AddressList)
+            {
+                if (i.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    j64Server = i.ToString();
+                    break;
+                }
+            }
+
+            // Save the info
+            var asi = AlarmSystemRepository.Get();
+            asi.j64Server = j64Server;
+            asi.j64Port = j64Port.ToString();
+            AlarmSystemRepository.Save(asi);
+
+            return asi;
         }
     }
 }

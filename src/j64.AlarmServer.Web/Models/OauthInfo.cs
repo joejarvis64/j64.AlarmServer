@@ -7,6 +7,9 @@ namespace j64.AlarmServer.Web.Models
 {
     public class OauthInfo
     {
+        public string STUserId { get; set; }
+        public string STPassword { get; set; }
+
         // These are created when the smart app oauth is enabled
         public string clientKey { get; set; }
         public string secretKey { get; set; }
