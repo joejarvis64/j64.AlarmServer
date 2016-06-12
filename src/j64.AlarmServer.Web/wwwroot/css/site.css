@@ -38,7 +38,8 @@ textarea {
 .navbar-brand { height: 80px; }*/
 
 .body-content {
-    padding-top: 100px;
+    /*padding-top: 100px;*/
+    margin-top: 80px;
 }
 
 /* Hide/rearrange for smaller screens */
