@@ -18,6 +18,7 @@ metadata {
 		capability "Actuator"
 		capability "Refresh"
 		capability "Polling"
+		capability "Sensor"
     
         attribute "alarm", "string"
         attribute "mode", "string"
