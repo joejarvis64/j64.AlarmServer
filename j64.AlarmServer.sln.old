@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{65DED916-37E4-4652-91C2-A8359D982A6B}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,14 +13,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BF037101-5084-4850-879E-84C47133891E}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "j64.AlarmServer", "src\j64.AlarmServer\j64.AlarmServer.xproj", "{CE7009A7-AC2D-4E23-AC7C-693B3B032CB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "j64.AlarmServer", "src\j64.AlarmServer\j64.AlarmServer.csproj", "{CE7009A7-AC2D-4E23-AC7C-693B3B032CB3}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Moon.AspNet.Authentication.Basic", "src\Moon.AspNet.Authentication.Basic\Moon.AspNet.Authentication.Basic.xproj", "{C3E342E1-AD85-4CFA-BE87-664402D64835}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Moon.AspNet.Authentication.Basic", "src\Moon.AspNet.Authentication.Basic\Moon.AspNet.Authentication.Basic.csproj", "{C3E342E1-AD85-4CFA-BE87-664402D64835}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "j64.AlarmServer.Web", "src\j64.AlarmServer.Web\j64.AlarmServer.Web.xproj", "{94CCF7F8-09F1-4CFD-91F7-8AB50DD39A37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "j64.AlarmServer.Web", "src\j64.AlarmServer.Web\j64.AlarmServer.Web.csproj", "{94CCF7F8-09F1-4CFD-91F7-8AB50DD39A37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

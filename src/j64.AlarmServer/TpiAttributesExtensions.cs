@@ -31,7 +31,7 @@ namespace j64.AlarmServer
             Type type = value.GetType();
 
             // Get fieldinfo for this type
-            System.Reflection.FieldInfo fieldInfo = type.GetField(value.ToString());
+            System.Reflection.FieldInfo fieldInfo = type.GetTypeInfo().GetDeclaredField(value.ToString());
 
             // Get the stringvalue attributes
             var attribs = fieldInfo.GetCustomAttributes(
@@ -47,7 +47,7 @@ namespace j64.AlarmServer
             Type type = value.GetType();
 
             // Get fieldinfo for this type
-            FieldInfo fieldInfo = type.GetField(value.ToString());
+            FieldInfo fieldInfo = type.GetTypeInfo().GetDeclaredField(value.ToString());
 
             // Get the stringvalue attributes
             var attribs = fieldInfo.GetCustomAttributes(typeof(CommandValueAttribute), false) as CommandValueAttribute[];
