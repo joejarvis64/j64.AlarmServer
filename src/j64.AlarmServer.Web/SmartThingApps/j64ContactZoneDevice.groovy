@@ -56,7 +56,6 @@ def toggleBypass() {
 }
 
 def poll() {
-	log.debug "poll"
 }
 
 def refresh() {

@@ -6,6 +6,7 @@ using Newtonsoft;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace j64.AlarmServer.Web.Repository
 {
@@ -64,14 +65,32 @@ namespace j64.AlarmServer.Web.Repository
                 return false;
 
             var htmlResult = await response.Content.ReadAsStringAsync();
-            foreach (Match m in Regex.Matches(htmlResult, "\\<a href=\"/ide/app/editor/([^\"]+)\".*?\\>\\<img .+?\\>\\s*(.+?)\\s*:\\s*(.+?)\\</a\\>", RegexOptions.Multiline | RegexOptions.IgnoreCase))
+
+            //foreach (Match m in Regex.Matches(htmlResult, "\\<a href=\"/ide/app/editor/([^\"]+)\".*?\\>\\<img .+?\\>\\s*(.+?)\\s*:\\s*(.+?)\\</a\\>", RegexOptions.Multiline | RegexOptions.IgnoreCase))
+            //{
+            //    if (m.Groups[3].Value == smartAppName)
+            //    {
+            //        Id = m.Groups[1].Value;
+            //        break;
+            //    }
+            //}
+
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(htmlResult);
+
+            var htmlNodes = htmlDoc.DocumentNode.SelectNodes("//a");
+            foreach (var node in htmlNodes)
             {
-                if (m.Groups[3].Value == smartAppName)
+                if (node.Attributes["href"]?.Value.StartsWith("/ide/app/editor") == true)
                 {
-                    Id = m.Groups[1].Value;
-                    break;
+                    if (node.InnerText.Trim().Contains(smartAppName))
+                    {
+                        Id = node.Attributes["href"].Value.Replace("/ide/app/editor/", "");
+                        break;
+                    }
                 }
             }
+
             if (Id == null)
                 return false;
 
@@ -175,8 +194,8 @@ namespace j64.AlarmServer.Web.Repository
                 throw new ArgumentException("The Id must be set before oauth can be enabled");
 
             // Find all the installed smart apps
-            clientKey = await myConnection.GetStringAsync(myConnection.GetUuidUri);
-            secretKey = await myConnection.GetStringAsync(myConnection.GetUuidUri);
+            //clientKey = await myConnection.GetStringAsync(myConnection.GetUuidUri);
+            //secretKey = await myConnection.GetStringAsync(myConnection.GetUuidUri);
 
             // Dig these out of the code code otherwise the oauth update will fail!
             string name = FindVarInSrc("name");
@@ -195,12 +214,13 @@ namespace j64.AlarmServer.Web.Repository
             parms.Add(new KeyValuePair<string, string>("author", author));
             parms.Add(new KeyValuePair<string, string>("description", description));
             parms.Add(new KeyValuePair<string, string>("gitRepo.id", ""));
-            parms.Add(new KeyValuePair<string, string>("_isShared", ""));
+            //parms.Add(new KeyValuePair<string, string>("_isShared", ""));
             parms.Add(new KeyValuePair<string, string>("iconUrl", iconUrl));
             parms.Add(new KeyValuePair<string, string>("iconX2Url", iconX2Url));
             parms.Add(new KeyValuePair<string, string>("iconX3Url", iconX3Url));
-            parms.Add(new KeyValuePair<string, string>("clientId", clientKey));
-            parms.Add(new KeyValuePair<string, string>("clientSecret", secretKey));
+            //parms.Add(new KeyValuePair<string, string>("clientId", clientKey));
+            //parms.Add(new KeyValuePair<string, string>("clientSecret", secretKey));
+            parms.Add(new KeyValuePair<string, string>("oauthEnabled", "true"));
             parms.Add(new KeyValuePair<string, string>("displayName", name));
             parms.Add(new KeyValuePair<string, string>("displayLink", ""));
             parms.Add(new KeyValuePair<string, string>("photoUrls", ""));
@@ -212,6 +232,20 @@ namespace j64.AlarmServer.Web.Repository
             var response = await myConnection.PostAsync(myConnection.UpdateSmartAppUri, content);
             if (response.StatusCode != HttpStatusCode.Found)
                 throw new Exception($"Oauth could not be enabled. Status code {response.StatusCode}");
+
+            // Find all the installed smart apps
+            response = await myConnection.GetAsync($"{myConnection.EditSmartAppUri}/{Id}");
+            if (response.StatusCode != HttpStatusCode.OK)
+                return false;
+
+            var htmlResult = await response.Content.ReadAsStringAsync();
+
+            // Get the client key & secret key
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(htmlResult);
+
+            clientKey = htmlDoc.DocumentNode.SelectSingleNode("//input[@id='clientId']").Attributes["value"].Value;
+            secretKey = htmlDoc.DocumentNode.SelectSingleNode("//input[@id='clientSecret']").Attributes["value"].Value;
 
             return true;
         }

@@ -19,6 +19,7 @@ namespace j64.AlarmServer.Web
 
             var host = new WebHostBuilder()
                 .UseKestrel()
+                .UseUrls("http://*:2064")
                 .UseConfiguration(config)
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()

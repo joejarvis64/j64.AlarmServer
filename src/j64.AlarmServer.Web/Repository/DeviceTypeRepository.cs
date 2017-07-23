@@ -6,6 +6,7 @@ using Newtonsoft;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace j64.AlarmServer.Web.Repository
 {
@@ -59,14 +60,24 @@ namespace j64.AlarmServer.Web.Repository
                 return false;
 
             var htmlResult = await response.Content.ReadAsStringAsync();
-            foreach (Match m in Regex.Matches(htmlResult, "\\<a href=\"/ide/device/editor/([^\"]+)\".*?\\>\\s*(.+?)\\s*:\\s*(.+?)\\</a\\>", RegexOptions.Multiline | RegexOptions.IgnoreCase))
+
+            // From String
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(htmlResult);
+
+            var htmlNodes = htmlDoc.DocumentNode.SelectNodes("//a");
+            foreach (var node in htmlNodes)
             {
-                if (m.Groups[3].Value == deviceName)
+                if (node.Attributes["href"]?.Value.StartsWith("/ide/device/editor") == true)
                 {
-                    Id = m.Groups[1].Value;
-                    break;
+                    if (node.InnerText.Trim().Contains(deviceName))
+                    {
+                        Id = node.Attributes["href"].Value.Replace("/ide/device/editor/", "");
+                        break;
+                    }
                 }
             }
+
             if (Id == null)
                 return false;
 

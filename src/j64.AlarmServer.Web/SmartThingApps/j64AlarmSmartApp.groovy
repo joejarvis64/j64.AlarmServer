@@ -74,9 +74,9 @@ def installAllDevices(partitions, zones) {
 
 	// Add any partitions that have not already been created
 	partitions.each { p -> 
-		def networkId = "partition" + p.Id
+		def networkId = "partition" + p.id
         def partitionDevice = children.find { item -> item.device.deviceNetworkId == networkId }
-        def name = "j64:" + p.Name + " Partition"
+        def name = "j64:" + p.name + " Partition"
 
 		if (partitionDevice == null) {
         	log.debug "Add Partition: ${name} => ${networkId}"
@@ -90,13 +90,13 @@ def installAllDevices(partitions, zones) {
         }
             
         // always set the current status for the partition
-        partitionDevice.setAlarm(p.InAlarm, p.IsArmed)
-        partitionDevice.setMode(p.ArmingMode, p.ReadyToArm)
+        partitionDevice.setAlarm(p.alarmOn.toString(), p.isArmed)
+        partitionDevice.setMode(p.armingMode, p.readyToArm)
         
         // Add an alarm device for this partition
-		networkId = "alarm" + p.Id
+		networkId = "alarm" + p.id
         def alarmDevice = children.find { item -> item.device.deviceNetworkId == networkId }
-        name = "j64:" + p.Name + " Alarm"
+        name = "j64:" + p.name + " Alarm"
 
 		if (alarmDevice == null) {
         	log.debug "Add Alarm: ${name} => ${networkId}"
@@ -109,15 +109,15 @@ def installAllDevices(partitions, zones) {
         }
             
         // always set the current status for the alarm
-        alarmDevice.setAlarm(p.InAlarm)
+        alarmDevice.setAlarm(p.alarmOn.toString())
 	}
     
     zones.each { z ->
-		def networkId = "zone" + z.Id
+		def networkId = "zone" + z.id
         def zoneDevice = children.find { item -> item.device.deviceNetworkId == networkId }
-        def name = "j64:" + z.Name
+        def name = "j64:" + z.name
         def zoneType = "j64 Contact Zone"
-        if ( z.ZoneType == 1 )
+        if ( z.zoneType == 1 )
            zoneType = "j64 Motion Zone"
         
         if (zoneDevice == null) {
@@ -136,7 +136,7 @@ def installAllDevices(partitions, zones) {
         }
         
         // set the current status for the zone
-        zoneDevice.setState(z.Status)
+        zoneDevice.setState(z.status)
     }
     
     // Delete any Zones and Parttions that are not in the alarm system configuration
@@ -144,7 +144,7 @@ def installAllDevices(partitions, zones) {
     
     	if ( d.device.deviceNetworkId.startsWith("zone") ) {
 			def deviceZoneId = d.device.deviceNetworkId.replaceAll("zone","")
-    		def alarmSystemZone = zones.find { z -> "${z.Id}" == "${deviceZoneId}" }
+    		def alarmSystemZone = zones.find { z -> "${z.id}" == "${deviceZoneId}" }
             if (alarmSystemZone == null) {
                log.debug "Removing zone: ${d.deviceNetworkId} because it was not in the j64 alarm system config"
                deleteChildDevice(d.device.deviceNetworkId)
@@ -153,7 +153,7 @@ def installAllDevices(partitions, zones) {
 	    
     	if ( d.device.deviceNetworkId.startsWith("partition") ) {
 			def devicePartitionId = d.device.deviceNetworkId.replaceAll("partition","")
-    		def alarmSystemPartition = partitions.find { z -> "${z.Id}" == "${devicePartitionId}" }
+    		def alarmSystemPartition = partitions.find { p -> "${p.id}" == "${devicePartitionId}" }
             if (alarmSystemPartition == null) {
                log.debug "Removing partition: ${d.deviceNetworkId} because it was not in the j64 alarm system config"
                deleteChildDevice(d.device.deviceNetworkId)
@@ -291,17 +291,20 @@ def localLanHandler(evt) {
 	    return
     }
     
-    def FromHost = msg.json.FromHost
-    def Route = msg.json.Route
+    def FromHost = msg.json.fromHost
+    def Route = msg.json.route
     
     // The request must have a from host property that matches the alarm server
     if (FromHost != j64AlarmServerAddress()) {
+		log.debug "localLanHandler: FromHost mismatch=${FromHost} <> ${j64AlarmServerAddress()}"
 	    return
     }
 
     // Ensure that the route property passed from the j64 server is what we expect     
     if (Route == "/api/AlarmSystem")
-       installAllDevices(msg.json.Response.Partitions, msg.json.Response.Zones)
+       installAllDevices(msg.json.response.partitions, msg.json.response.zones)
+	else
+		log.debug "localLanHandler: Route mismatch=${Route} <> /api/AlarmSystem"
 }
 
 def j64AlarmServerAddress() {

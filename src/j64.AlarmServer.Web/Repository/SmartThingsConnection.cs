@@ -17,6 +17,7 @@ namespace j64.AlarmServer.Web.Repository
         public String SaveCompileSmartAppUri { get { return BaseUrl + "/ide/app/saveFromCode"; } }
         public String PublishSmartAppUri { get { return BaseUrl + "/ide/app/publishAjax"; } }
         public String UpdateSmartAppUri { get { return BaseUrl + "/ide/app/update"; } }
+        public String EditSmartAppUri { get { return BaseUrl + "/ide/app/edit"; } }
         public String GetUuidUri { get { return BaseUrl + "/appIde/createUuid"; } }
         public String CreateDeviceTypeUri { get { return BaseUrl + "/ide/device/saveFromCode"; } }
         public String SaveCompileDeviceTypeUri { get { return BaseUrl + "/ide/device/compile"; } }
