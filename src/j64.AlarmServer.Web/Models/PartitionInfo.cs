@@ -16,6 +16,7 @@ namespace j64.AlarmServer.Web.Models
             Id = p.Id;
             Name = p.Name;
             IsArmed = p.ArmedLed;
+            SHMIntegrationEnabled = p.SHMIntegrationEnabled;
             ArmingMode = p.ArmingMode.ToString();
             AlarmOn = p.AlarmActive;
             ReadyToArm = p.ReadyLed;
@@ -29,6 +30,8 @@ namespace j64.AlarmServer.Web.Models
         public int Id { get; set; }
 
         public string Name { get; set; }
+
+        public bool SHMIntegrationEnabled { get; set; }
 
         public bool IsArmed { get; set; }
 

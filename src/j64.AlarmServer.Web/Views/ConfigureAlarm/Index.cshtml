@@ -95,7 +95,9 @@
                     {
                         <tr>
                             <td><input asp-for="@partition.Id" readonly="readonly" style='width: 2em' /></td>
-                            <td><input asp-for="@partition.Name" /></td>
+                            <td><input asp-for="@partition.Name" />&nbsp;&nbsp;
+                                    <label><input asp-for="@partition.SHMIntegrationEnabled" type="checkbox">SHM Integration</label>
+                            </td>
                             <td>
                                 <a class="btn btn-default" asp-action="DeletePartition" asp-route-id="@partition.Id"><i class="fa fa-trash"></i></a>
                             </td>

@@ -48,6 +48,7 @@ namespace j64.AlarmServer.Web.Controllers
                     var partition = myAlarmSystem.PartitionList.Find(p => p.Id.ToString() == Request.Form["partition.Id"][i]);
 
                     partition.Name = Request.Form["partition.Name"][i];
+                    partition.SHMIntegrationEnabled = Convert.ToBoolean(Request.Form["partition.SHMIntegrationEnabled"][i]);
                 }
 
                 for (int i = 0; i < Request.Form["zone.Id"].Count; i++)

@@ -96,6 +96,7 @@ namespace j64.AlarmServer.Web.Repository
                 parms.Add(new KeyValuePair<string, string>("IsArmed", partitionInfo.IsArmed.ToString()));
                 parms.Add(new KeyValuePair<string, string>("ArmingMode", partitionInfo.ArmingMode));
                 parms.Add(new KeyValuePair<string, string>("AlarmOn", partitionInfo.AlarmOn.ToString()));
+                parms.Add(new KeyValuePair<string, string>("SHMIntegrationEnabled", partitionInfo.SHMIntegrationEnabled.ToString()));
                 msg.Content = new System.Net.Http.FormUrlEncodedContent(parms);
                 var response = client.SendAsync(msg);
                 response.Wait();

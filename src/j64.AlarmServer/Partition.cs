@@ -26,6 +26,12 @@ namespace j64.AlarmServer
         public string Name { get; set; }
 
         /// <summary>
+        /// Indicates that integration with the SHM should be allowd
+        /// </summary>
+        [JsonIgnore]
+        public bool SHMIntegrationEnabled { get; set; }
+
+        /// <summary>
         /// Indicates the partition is ready to be armed
         /// </summary>
         [JsonIgnore]

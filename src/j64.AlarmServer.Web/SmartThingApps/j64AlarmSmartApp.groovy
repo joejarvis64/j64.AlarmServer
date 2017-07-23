@@ -172,40 +172,45 @@ def updatePartition(evt) {
     def IsArmed = params.IsArmed.toString()
     def AlarmOn = params.AlarmOn.toString()
     def ArmingMode = params.ArmingMode
-
+    def SHMIntegrationEnabled = params.SHMIntegrationEnabled
+    
 	def children = getChildDevices()
     def networkId = "partition${Id}"
     def partitionDevice = children.find { item -> item.device.deviceNetworkId == networkId }
     if (partitionDevice != null) {
-		log.debug "updatePartition: ${Id} ${Name} ReadyToArm: ${ReadyToArm} IsArmed: ${IsArmed} AlarmOn: ${AlarmOn} ArmingMode: ${ArmingMode}"
+		log.debug "updatePartition: ${Id} ${Name} ReadyToArm: ${ReadyToArm} IsArmed: ${IsArmed} AlarmOn: ${AlarmOn} ArmingMode: ${ArmingMode}  SHMIntegrationEnabled: ${SHMIntegrationEnabled}"
 		partitionDevice.setAlarm(AlarmOn, IsArmed, ArmingMode)
         partitionDevice.setMode(ArmingMode, ReadyToArm)
         
         // Keep smart home monitor (SHM) in synch with the j64 alarm server
         // We sync SHM with partition 1 in the alarm system since it does
         // not support multiple partitions
-
-		// The SHM integration is not working any more.  I assume they have 
-		// modified this eventing mechanism so I will have to research to figure
-		// out how I might plug into it
-        //if ("${Id}" == "1") {
-        //	if ("${IsArmed}".toLowerCase() == "false") {
-		//		setShmAlarmMode("off")
-		//	} else {
-        //        log.debug "check ArmingMode ${ArmingMode}"
-        //		if (ArmingMode == "Away")
-        //   		setShmAlarmMode("away")
-        //	    
-        //        if (ArmingMode == "Stay")
-    	//        	setShmAlarmMode("stay")
-	    //    }
-        //}
+        if (SHMIntegrationEnabled) {
+            if ("${Id}" == "1") {
+            	if (IsArmed == "False") {
+                    if (ArmingMode == "NotArmed") {
+                        sendLocationEvent(name: "alarmSystemStatus", value: "off", data: "From-UpdatePartition")
+                    }
+                }
+                
+                if (IsArmed == "True") {
+                    if (ArmingMode == "ExitDelayInProgress") {
+                        sendLocationEvent(name: "alarmSystemStatus", value: "stay", data: "From-UpdatePartition")
+                    }
+                    if (ArmingMode == "Stay") {
+                        sendLocationEvent(name: "alarmSystemStatus", value: "stay", data: "From-UpdatePartition")
+                    }
+                    if (ArmingMode == "Away") {
+                        sendLocationEvent(name: "alarmSystemStatus", value: "away", data: "From-UpdatePartition")
+                    }
+                }
+            }
+        }
 	}
     
     networkId = "alarm${Id}"
     def alarmDevice = children.find { item -> item.device.deviceNetworkId == networkId }
     if (alarmDevice != null) {
-		log.debug "updateAlarm: ${Id} ${Name} AlarmOn: ${AlarmOn}"
 		alarmDevice.setAlarm(AlarmOn)
 	}
 }
@@ -275,10 +280,7 @@ def uninstalled() {
 
 def initialize() {
 	subscribe(location, null, localLanHandler, [filterEvents:false])
-    
-	// Integration with the smart home monitor is not working like this any more. 
-	// need to research how to get it working again
-	//subscribe(location, "alarmSystemStatus", shmModeChangeHandler, [filterEvents:false])
+	subscribe(location, "alarmSystemStatus", shmModeChangeHandler, [filterEvents:false])
 }
 
 def refresh() {   
@@ -321,37 +323,38 @@ def j64AlarmServerAddress() {
 /* ************************************** */
 /* Handle event when the SHM mode changes */
 /* ************************************** */
-//def shmModeChangeHandler(evt) {
-//
-//	// Unfortunately we have to assume partition 1 for the smart home monitor since it does not support
-//  // multiple partitions.  Maybe this could change based on the location??
-//	def Id = 1
-//	def networkId = "partition${Id}"
-//
-//	def partitionDevice = getChildDevices().find { item -> item.device.deviceNetworkId == networkId }
-//    if (partitionDevice != null) {
-//    	def mode = partitionDevice.currentAlarm 
-//
-//		if (evt.value == "off" && mode == "armed") {
-//	    	disarmPartition(1)
-//    	}
-//        
-//        if (evt.value != "off" && mode == "disarmed") {
-//	    	armPartition(1, evt.value)
-//    	}
-//	}
-//}
+def shmModeChangeHandler(evt) {
 
-//private def setShmAlarmMode(name) {
-//    def event = [
-//        name:           "alarmSystemStatus",
-//        value:          name,
-//        isStateChange:  true,
-//        displayed:      true,
-//        description:    "alarm system status is ${name}",
-//    ]
-//    sendLocationEvent(event)
-//}
+  // Unfortunately we have to assume partition 1 for the smart home monitor since it does not support
+  // multiple partitions.  Maybe this could change based on the location??
+	def Id = 1
+	def networkId = "partition${Id}"
+
+    if (evt.data == "From-UpdatePartition") {
+    	log.debug "shmModeChangeHandler: called from UpdatePartition so partition status is already set properly"
+		return
+    }
+    
+	def partitionDevice = getChildDevices().find { item -> item.device.deviceNetworkId == networkId }
+    if (partitionDevice != null) {
+    	def mode = partitionDevice.currentAlarm.toLowerCase() 
+
+		if (evt.value == "off"){
+		   log.debug "shmModeChangeHandler: disarm the partition"
+		   disarmPartition(1);
+		}
+
+		if (evt.value == "stay"){
+		   log.debug "shmModeChangeHandler: stay arm the partition"
+		   armPartition(1, "stay");
+		}
+
+		if (evt.value == "away") {
+		   log.debug "shmModeChangeHandler: away arm the partition"
+		   armPartition(1, "away");
+		}
+	}
+}
 
 /* **************** */
 /* Helper Functions */
