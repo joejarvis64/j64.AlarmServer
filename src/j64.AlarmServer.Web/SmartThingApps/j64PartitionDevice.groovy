@@ -35,9 +35,11 @@ metadata {
   tiles {
     // Main Row
     standardTile("alarm", "device.alarm", width: 2, height: 2, canChangeBackground: true, canChangeIcon: true, decoration: "flat") {
-      state "alarm",    label: '${name}', icon: "st.contact.contact.open",   backgroundColor: "#b82121"
-      state "armed",    label: '${name}', icon: "st.contact.contact.open",   backgroundColor: "#2147b8"
-      state "disarmed", label: '${name}', icon: "st.contact.contact.closed", backgroundColor: "#6cb821"
+      state "Alarm",       label: '${currentValue}', icon: "st.contact.contact.open",   backgroundColor: "#b82121"
+      state "Exit Delay",  label: '${currentValue}', icon: "st.contact.contact.open",   backgroundColor: "#2147b8"
+      state "Stay Armed",  label: '${currentValue}', icon: "st.contact.contact.open",   backgroundColor: "#2147b8"
+      state "Away Armed",  label: '${currentValue}', icon: "st.contact.contact.open",   backgroundColor: "#2147b8"
+      state "DisArmed",    label: '${currentValue}', icon: "st.contact.contact.closed", backgroundColor: "#6cb821"
     }
        
     standardTile("awayArm", "device.alarm", decoration: "flat") {
@@ -79,14 +81,31 @@ metadata {
     }
 }
 
-def setAlarm(alarm, armed) {
+def setAlarm(alarm, armed, armingMode) {
 	if ("${alarm}".toLowerCase() == "true") {
-	  	sendEvent (name: "alarm", value: "alarm")
+	  	log.debug "send event Alarm"
+		sendEvent (name: "alarm", value: "Alarm")
 	} else {
-		if ("${armed}".toLowerCase() == "true")
-		  	sendEvent (name: "alarm", value: "armed")
-		else
-			sendEvent (name: "alarm", value: "disarmed")
+		if ("${armed}".toLowerCase() == "true") {
+		    if ("${armingMode.toLowerCase()}" == "stay") {
+                sendEvent (name: "alarm", value: "Stay Armed")
+            }
+		    else if ("${armingMode.toLowerCase()}" == "away") {
+				sendEvent (name: "alarm", value: "Away Armed")
+            }
+		    else if ("${armingMode.toLowerCase()}" == "exitdelayinprogress") {
+				sendEvent (name: "alarm", value: "Exit Delay")
+            } 
+		    else if ("${armingMode.toLowerCase()}" == "notarmed") {
+				sendEvent (name: "alarm", value: "DisArmed")
+            } 
+			else {
+			  	log.debug "Unknown arming mode ${armingMode}"
+			}
+		}
+		else {
+			sendEvent (name: "alarm", value: "DisArmed")
+        }
 	}
 }
 
